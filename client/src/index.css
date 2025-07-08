@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(210, 40%, 98%);
+  --foreground: hsl(222, 47%, 11%);
+  --muted: hsl(210, 40%, 94%);
+  --muted-foreground: hsl(215, 16%, 47%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222, 47%, 11%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222, 47%, 11%);
+  --border: hsl(214, 32%, 91%);
+  --input: hsl(214, 32%, 91%);
+  --primary: hsl(218, 91%, 60%);
+  --primary-foreground: hsl(220, 100%, 99%);
+  --secondary: hsl(260, 82%, 65%);
+  --secondary-foreground: hsl(220, 100%, 99%);
+  --accent: hsl(158, 64%, 42%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(222, 47%, 11%);
+  --radius: 0.5rem;
+  --wisdom: hsl(260, 82%, 65%);
+  --growth: hsl(158, 64%, 42%);
+}
+
+.dark {
+  --background: hsl(222, 47%, 11%);
+  --foreground: hsl(213, 31%, 91%);
+  --muted: hsl(223, 47%, 16%);
+  --muted-foreground: hsl(215, 16%, 57%);
+  --popover: hsl(222, 47%, 11%);
+  --popover-foreground: hsl(213, 31%, 91%);
+  --card: hsl(222, 47%, 11%);
+  --card-foreground: hsl(213, 31%, 91%);
+  --border: hsl(223, 47%, 16%);
+  --input: hsl(223, 47%, 16%);
+  --primary: hsl(218, 91%, 60%);
+  --primary-foreground: hsl(220, 100%, 99%);
+  --secondary: hsl(260, 82%, 65%);
+  --secondary-foreground: hsl(220, 100%, 99%);
+  --accent: hsl(158, 64%, 42%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(213, 31%, 91%);
+  --wisdom: hsl(260, 82%, 65%);
+  --growth: hsl(158, 64%, 42%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary to-secondary;
+  }
+  
+  .gradient-wisdom {
+    @apply bg-gradient-to-r from-wisdom to-primary;
+  }
+  
+  .gradient-growth {
+    @apply bg-gradient-to-r from-growth to-primary;
+  }
+  
+  .star-rating {
+    @apply flex items-center space-x-1;
+  }
+  
+  .star-rating .star {
+    @apply cursor-pointer transition-colors;
+  }
+  
+  .star-rating .star:hover,
+  .star-rating .star.active {
+    @apply text-yellow-400;
+  }
+  
+  .star-rating .star.inactive {
+    @apply text-gray-300;
+  }
+}
