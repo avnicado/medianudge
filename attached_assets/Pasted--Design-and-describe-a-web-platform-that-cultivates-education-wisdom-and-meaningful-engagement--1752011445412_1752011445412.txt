@@ -1,0 +1,141 @@
+    Design and describe a web platform that cultivates education, wisdom, and meaningful engagement over shallow entertainment.
+
+    The platform is social, transparent, and aspirational: everyone’s intellectual journey is public, and their history, ratings, and scores are open for others to see and learn from.
+
+    The platform helps users:
+
+        Track their intellectual growth over time
+
+        Discover mind-expanding media
+
+        Review, reflect on, and adjust their own ratings and critiques
+
+        Connect with others based on their guiding questions, media habits, and contributions
+
+        Contribute thoughtful content to the community
+
+🌟 Mission
+
+Build a media and social platform centered around curiosity, wisdom, and accountability — encouraging users to choose content that grows them and to think critically about what they consume.
+🖥 Layout
+Homepage
+
+    Center of screen: Personalized Recommendations by Category
+
+        📚 Books
+
+        🎓 Courses
+
+        🎬 Movies
+
+        🎧 Podcasts
+
+        🔊 Debates
+
+        🎮 Video Games / Gamified Learning
+
+    Recommendations display:
+
+        Star rating (1–5★) where 1★ = brainrot/junkfood, 5★ = mind-expanding/healthfood.
+
+        Category & theme tags
+
+        Why this was recommended (e.g., tied to your guiding question, or inspired by a high-rated user you follow)
+
+🪪 Profile Page
+
+Your Profile Page is fully public — every user can see every other user’s:
+
+    Wisdom Score: e.g., College Sophomore+
+
+        Calculated based on the quality and depth of the content you engage with — consuming and rating mostly high-quality, mind-expanding media raises your score.
+
+        Shows percentile rank compared to other users.
+
+    Critic Score: e.g., 3.8/5
+
+        Reflects the clarity, consistency, and thoughtfulness of your reviews.
+
+    Media History:
+
+        All content you’ve watched/read/played, and your ratings & reviews for each.
+
+        Date-stamped history with scores.
+
+    Yearly Goals & Progress:
+
+        Books, courses, debates, etc., with % complete.
+
+    Expertise Goals:
+
+        Slider or number from 1–10 (laser-focused specialist to well-rounded generalist)
+
+    Guiding Questions: (editable, and also public)
+
+        E.g., “Does history repeat itself?” “How to be a better parent?” “What is love?”
+
+📊 Reviewing & Re-Weighing Your Media
+
+    Users can revisit their past media and adjust:
+
+        Their rating (1–5★)
+
+        Their written review
+
+
+🗣 Social Page
+
+Fully transparent and public social ecosystem — encouraging accountability & inspiration:
+
+    See everyone’s:
+
+        Wisdom Score & Critic Score
+
+        Media history, ratings & reviews
+
+        Guiding Questions
+
+        Expertise Goals & yearly progress
+
+    Debate Clubs: join and view past debates; ratings & critiques of arguments are public.
+
+    Book Clubs: themed around genres or guiding questions.
+
+    Follow users you admire — their activity appears in your feed.
+
+    Top Contributors: weekly, monthly, all-time leaderboards.
+
+Your Uploaded Content:
+
+    Video (e.g., “I’m making pasta without water” — 200 views, 3.4★)
+
+    Article (e.g., “My critique of Moby Dick…” — 360 views, 4.2★)
+
+    Contributions to courses & debates (with public ratings)
+
+🪄 Other Features
+
+    Progress Dashboard: charts and milestones of your activity & scores.
+
+    Weekly Challenge: encourages you to engage with new, higher-level content.
+
+    Junk Tolerance Slider: lets you set how much low-value content appears in your feed — your setting is public too.
+
+    Curated Lists: by staff, community members, and your own saved collections.
+
+📐 Design Guidance
+
+    Clean, inspiring design — avoids flashy or distracting elements.
+
+    Thoughtful use of colors & typography to reflect seriousness but stay approachable.
+
+    Works on both mobile and desktop.
+
+🔍 Summary of Key Principles
+
+✅ All user data — wisdom score, critic score, history, reviews, guiding questions — is public.
+✅ Wisdom score is calculated only from the quality of content you engage with.
+✅ Users can review and re-weigh past content; weights are tied to their critic score.
+✅ Transparency and accountability are core to the social experience.
+
+    Please create a user experience and interface that reflects this vision, with all these principles and features prioritized and clearly explained in your output.
