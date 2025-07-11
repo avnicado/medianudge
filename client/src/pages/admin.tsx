@@ -63,11 +63,7 @@ export default function Admin() {
         totalRatings: data.totalRatings || 0,
         imageUrl: data.imageUrl || null,
       };
-      return await apiRequest("/api/media", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      return await apiRequest("POST", "/api/media", payload);
     },
     onSuccess: () => {
       toast({

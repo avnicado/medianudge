@@ -96,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/media', isAuthenticated, async (req: any, res) => {
+  app.post('/api/media', async (req: any, res) => {
     try {
       const validatedData = insertMediaItemSchema.parse(req.body);
       const item = await storage.createMediaItem(validatedData);

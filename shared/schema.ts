@@ -221,8 +221,6 @@ export const insertGuidingQuestionSchema = createInsertSchema(guidingQuestions).
 
 export const insertMediaItemSchema = createInsertSchema(mediaItems).omit({
   id: true,
-  avgRating: true,
-  totalRatings: true,
   createdAt: true,
 });
 
