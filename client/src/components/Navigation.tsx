@@ -46,14 +46,12 @@ export default function Navigation() {
           
           <nav className="hidden md:flex items-center space-x-6">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a className={`transition-colors font-medium ${
-                  link.active 
-                    ? 'text-primary' 
-                    : 'text-slate-700 hover:text-primary'
-                }`}>
-                  {link.label}
-                </a>
+              <Link key={link.href} href={link.href} className={`transition-colors font-medium ${
+                link.active 
+                  ? 'text-primary' 
+                  : 'text-slate-700 hover:text-primary'
+              }`}>
+                {link.label}
               </Link>
             ))}
           </nav>

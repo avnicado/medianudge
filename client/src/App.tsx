@@ -9,6 +9,7 @@ import Home from "@/pages/home";
 import Profile from "@/pages/profile";
 import Social from "@/pages/social";
 import Progress from "@/pages/progress";
+import Admin from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -26,6 +27,7 @@ function Router() {
           <Route path="/progress" component={Progress} />
         </>
       )}
+      <Route path="/admin/upload" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );

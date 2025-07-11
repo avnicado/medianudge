@@ -86,17 +86,32 @@ export default function Home() {
   });
 
   const { data: booksRecommendations } = useQuery({
-    queryKey: ["/api/recommendations", { type: "book" }],
+    queryKey: ["/api/recommendations?type=book"],
     enabled: isAuthenticated,
   });
 
   const { data: coursesRecommendations } = useQuery({
-    queryKey: ["/api/recommendations", { type: "course" }],
+    queryKey: ["/api/recommendations?type=course"],
     enabled: isAuthenticated,
   });
 
   const { data: podcastsRecommendations } = useQuery({
-    queryKey: ["/api/recommendations", { type: "podcast" }],
+    queryKey: ["/api/recommendations?type=podcast"],
+    enabled: isAuthenticated,
+  });
+
+  const { data: moviesRecommendations } = useQuery({
+    queryKey: ["/api/recommendations?type=movie"],
+    enabled: isAuthenticated,
+  });
+
+  const { data: gamesRecommendations } = useQuery({
+    queryKey: ["/api/recommendations?type=game"],
+    enabled: isAuthenticated,
+  });
+
+  const { data: debatesRecommendations } = useQuery({
+    queryKey: ["/api/recommendations?type=debate"],
     enabled: isAuthenticated,
   });
 
@@ -181,8 +196,8 @@ export default function Home() {
           </Card>
         </div>
 
-        {/* Recommendation Categories */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+        {/* Recommendation Categories - Row 1 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
           {/* Books */}
           <Card>
             <CardHeader>
@@ -248,6 +263,78 @@ export default function Home() {
               </div>
               <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
                 View All Podcasts
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recommendation Categories - Row 2 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+          {/* Movies */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center">
+                  <Film className="w-5 h-5 text-primary mr-2" />
+                  Movies
+                </CardTitle>
+                <span className="text-sm text-slate-500">Thought-provoking films</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {moviesRecommendations?.slice(0, 2).map((movie: any) => (
+                  <MediaCard key={movie.id} media={movie} />
+                ))}
+              </div>
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
+                View All Movies
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Games */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center">
+                  <Gamepad2 className="w-5 h-5 text-primary mr-2" />
+                  Games
+                </CardTitle>
+                <span className="text-sm text-slate-500">Engaging experiences</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {gamesRecommendations?.slice(0, 2).map((game: any) => (
+                  <MediaCard key={game.id} media={game} />
+                ))}
+              </div>
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
+                View All Games
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Debates */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center">
+                  <Users className="w-5 h-5 text-primary mr-2" />
+                  Debates
+                </CardTitle>
+                <span className="text-sm text-slate-500">Critical thinking</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {debatesRecommendations?.slice(0, 2).map((debate: any) => (
+                  <MediaCard key={debate.id} media={debate} />
+                ))}
+              </div>
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
+                View All Debates
               </Button>
             </CardContent>
           </Card>

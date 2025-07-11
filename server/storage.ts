@@ -402,15 +402,21 @@ export class DatabaseStorage implements IStorage {
 
     const ratedIds = userRatedItems.map(r => r.mediaId);
     
+    // Build conditions array
+    const conditions = [];
+    
+    if (ratedIds.length > 0) {
+      conditions.push(sql`${mediaItems.id} NOT IN (${ratedIds})`);
+    }
+    
+    if (type) {
+      conditions.push(eq(mediaItems.type, type));
+    }
+    
     const query = db
       .select()
       .from(mediaItems)
-      .where(
-        and(
-          ratedIds.length > 0 ? sql`${mediaItems.id} NOT IN (${ratedIds})` : undefined,
-          type ? eq(mediaItems.type, type) : undefined
-        )
-      )
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(desc(mediaItems.avgRating))
       .limit(10);
 
