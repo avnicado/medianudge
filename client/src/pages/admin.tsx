@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,7 +12,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2 } from "lucide-react";
+import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Trash2, Edit, Eye } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const mediaItemSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -55,6 +57,18 @@ export default function Admin() {
     },
   });
 
+  // Fetch all media items
+  const { data: mediaItems, isLoading } = useQuery({
+    queryKey: ["/api/media"],
+    queryFn: async () => {
+      const response = await fetch("/api/media");
+      if (!response.ok) {
+        throw new Error("Failed to fetch media items");
+      }
+      return response.json();
+    },
+  });
+
   const createMediaItemMutation = useMutation({
     mutationFn: async (data: MediaItemFormData) => {
       const payload = {
@@ -83,6 +97,34 @@ export default function Admin() {
       });
     },
   });
+
+  const deleteMediaItemMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest("DELETE", `/api/media/${id}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Media item deleted successfully!",
+      });
+      // Invalidate caches to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["/api/recommendations"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/media"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete media item",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm("Are you sure you want to delete this media item?")) {
+      await deleteMediaItemMutation.mutateAsync(id);
+    }
+  };
 
   const onSubmit = async (data: MediaItemFormData) => {
     setIsSubmitting(true);
@@ -299,6 +341,68 @@ export default function Admin() {
             <li>• New items will appear in the appropriate category on the home page</li>
           </ul>
         </div>
+
+        {/* Media Items Management */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Eye className="w-5 h-5 mr-2" />
+              Manage Media Items
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="flex justify-center items-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+              </div>
+            ) : (
+              <ScrollArea className="h-96">
+                <div className="space-y-4">
+                  {mediaItems?.map((item: any) => {
+                    const typeOption = mediaTypeOptions.find(opt => opt.value === item.type);
+                    const Icon = typeOption?.icon || BookOpen;
+                    
+                    return (
+                      <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg bg-white">
+                        <div className="flex items-center space-x-4">
+                          <Icon className="w-5 h-5 text-slate-600" />
+                          <div>
+                            <h3 className="font-semibold text-slate-900">{item.title}</h3>
+                            <p className="text-sm text-slate-600">{item.author}</p>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <Badge variant="outline" className="text-xs">
+                                {typeOption?.label || item.type}
+                              </Badge>
+                              <span className="text-xs text-slate-500">
+                                {item.avgRating ? `${item.avgRating}★` : 'No rating'} 
+                                {item.totalRatings ? ` (${item.totalRatings})` : ''}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDelete(item.id)}
+                            disabled={deleteMediaItemMutation.isPending}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {mediaItems?.length === 0 && (
+                    <div className="text-center py-8 text-slate-500">
+                      No media items found. Add some using the form above.
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

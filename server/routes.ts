@@ -121,6 +121,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete('/api/media/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteMediaItem(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting media item:", error);
+      res.status(500).json({ message: "Failed to delete media item" });
+    }
+  });
+
   // User media ratings routes
   app.get('/api/user/media-ratings', isAuthenticated, async (req: any, res) => {
     try {
@@ -303,11 +314,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Recommendations routes
-  app.get('/api/recommendations', isAuthenticated, async (req: any, res) => {
+  app.get('/api/recommendations', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
       const { type } = req.query;
-      const recommendations = await storage.getRecommendations(userId, type as string);
+      const recommendations = await storage.getRecommendations("anonymous", type as string);
       res.json(recommendations);
     } catch (error) {
       console.error("Error fetching recommendations:", error);

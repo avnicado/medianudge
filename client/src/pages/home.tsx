@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { isUnauthorizedError } from "@/lib/authUtils";
 import Navigation from "@/components/Navigation";
 import MediaCard from "@/components/MediaCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,113 +30,79 @@ import {
 
 export default function Home() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
 
-  // Redirect to home if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
-
-  // Fetch user data and recommendations
+  // Fetch user data and recommendations (no authentication required)
   const { data: user } = useQuery({
     queryKey: ["/api/auth/user"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable auth queries
   });
 
   const { data: guidingQuestions } = useQuery({
     queryKey: ["/api/guiding-questions"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific queries
   });
 
   const { data: userRatings } = useQuery({
     queryKey: ["/api/user/media-ratings"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific queries
   });
 
   const { data: userContent } = useQuery({
     queryKey: ["/api/user/content"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific queries
   });
 
   const { data: yearlyGoal } = useQuery({
     queryKey: ["/api/user/yearly-goal", new Date().getFullYear()],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific queries
   });
 
   const { data: weeklyChallenge } = useQuery({
     queryKey: ["/api/weekly-challenge"],
-    enabled: isAuthenticated,
+    enabled: true, // Keep weekly challenge enabled
   });
 
   const { data: recentActivity } = useQuery({
     queryKey: ["/api/user/activity"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific queries
   });
 
   const { data: booksRecommendations } = useQuery({
     queryKey: ["/api/recommendations?type=book"],
-    enabled: isAuthenticated,
+    enabled: true, // Enable recommendations for all users
   });
 
   const { data: coursesRecommendations } = useQuery({
     queryKey: ["/api/recommendations?type=course"],
-    enabled: isAuthenticated,
+    enabled: true, // Enable recommendations for all users
   });
 
   const { data: podcastsRecommendations } = useQuery({
     queryKey: ["/api/recommendations?type=podcast"],
-    enabled: isAuthenticated,
+    enabled: true, // Enable recommendations for all users
   });
 
   const { data: moviesRecommendations } = useQuery({
     queryKey: ["/api/recommendations?type=movie"],
-    enabled: isAuthenticated,
+    enabled: true, // Enable recommendations for all users
   });
 
   const { data: gamesRecommendations } = useQuery({
     queryKey: ["/api/recommendations?type=game"],
-    enabled: isAuthenticated,
+    enabled: true, // Enable recommendations for all users
   });
 
   const { data: debatesRecommendations } = useQuery({
     queryKey: ["/api/recommendations?type=debate"],
-    enabled: isAuthenticated,
+    enabled: true, // Enable recommendations for all users
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  // No authentication required - show content to all users
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  const wisdomLevel = user?.wisdomScore >= 800 ? "PhD Level" : 
-                     user?.wisdomScore >= 600 ? "Master's Level" : 
-                     user?.wisdomScore >= 400 ? "College Senior+" : 
-                     user?.wisdomScore >= 200 ? "College Junior" : "High School";
+  const wisdomLevel = "Explorer"; // Default level for anonymous users
 
   const getProgressPercentage = () => {
-    if (!yearlyGoal) return 0;
-    const totalTargets = (yearlyGoal.booksTarget || 0) + (yearlyGoal.coursesTarget || 0) + 
-                        (yearlyGoal.debatesTarget || 0) + (yearlyGoal.podcastsTarget || 0);
-    const totalCompleted = (yearlyGoal.booksCompleted || 0) + (yearlyGoal.coursesCompleted || 0) + 
-                          (yearlyGoal.debatesCompleted || 0) + (yearlyGoal.podcastsCompleted || 0);
-    return totalTargets > 0 ? (totalCompleted / totalTargets) * 100 : 0;
+    return 0; // Default for anonymous users
   };
 
   return (
@@ -149,51 +113,23 @@ export default function Home() {
         {/* Welcome Section */}
         <div className="mb-8">
           <div className="gradient-primary rounded-xl p-8 text-white mb-6">
-            <h2 className="text-2xl font-bold mb-2">Welcome back, {user?.firstName || 'Fellow Learner'}!</h2>
-            <p className="text-blue-100 mb-4">Continue your intellectual journey with curated recommendations based on your guiding questions.</p>
+            <h2 className="text-2xl font-bold mb-2">Welcome to MediaNudge!</h2>
+            <p className="text-blue-100 mb-4">Discover quality content that cultivates education, wisdom, and meaningful engagement. Browse curated recommendations across books, courses, podcasts, movies, games, and debates.</p>
             <div className="flex items-center space-x-6 text-sm">
               <div className="flex items-center space-x-2">
                 <Trophy className="w-4 h-4 text-yellow-300" />
-                <span>Wisdom Score: {wisdomLevel} ({user?.wisdomScore || 0} points)</span>
+                <span>Wisdom Level: {wisdomLevel}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Star className="w-4 h-4 text-yellow-300" />
-                <span>Critic Score: {user?.criticScore?.toFixed(1) || '0.0'}/5</span>
+                <span>Quality First Platform</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Target className="w-4 h-4 text-green-300" />
-                <span>2024 Goal: {getProgressPercentage().toFixed(0)}% Complete</span>
+                <span>Growth Over Entertainment</span>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Guiding Questions */}
-        <div className="mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Compass className="w-5 h-5 text-primary mr-2" />
-                Your Guiding Questions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {guidingQuestions?.map((question: any) => (
-                  <div key={question.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <span className="text-slate-700">"{question.question}"</span>
-                    <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-                <Button variant="ghost" className="text-primary hover:text-primary/80 text-sm font-medium">
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add Guiding Question
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Recommendation Categories - Row 1 */}

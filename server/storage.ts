@@ -40,6 +40,7 @@ export interface IStorage {
   getMediaItems(type?: string, limit?: number): Promise<MediaItem[]>;
   getMediaItem(id: number): Promise<MediaItem | undefined>;
   createMediaItem(item: InsertMediaItem): Promise<MediaItem>;
+  deleteMediaItem(id: number): Promise<void>;
   searchMediaItems(query: string, type?: string): Promise<MediaItem[]>;
   
   // User media ratings
@@ -144,6 +145,10 @@ export class DatabaseStorage implements IStorage {
       .values(item)
       .returning();
     return newItem;
+  }
+
+  async deleteMediaItem(id: number): Promise<void> {
+    await db.delete(mediaItems).where(eq(mediaItems.id, id));
   }
 
   async searchMediaItems(query: string, type?: string): Promise<MediaItem[]> {
