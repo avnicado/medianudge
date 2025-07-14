@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: medianudge-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: medianudge
+      POSTGRES_USER: medianudge
+      POSTGRES_PASSWORD: medianudge_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medianudge -d medianudge"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - medianudge-network
+
+  # MediaNudge Application
+  app:
+    build: .
+    container_name: medianudge-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      DATABASE_URL: postgresql://medianudge:medianudge_password@postgres:5432/medianudge
+      SESSION_SECRET: your-secret-key-change-this-in-production
+      PGDATABASE: medianudge
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: medianudge
+      PGPASSWORD: medianudge_password
+    ports:
+      - "3000:5000"
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - medianudge-network
+
+  # Development service (optional - for development with hot reload)
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: medianudge-dev
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      DATABASE_URL: postgresql://medianudge:medianudge_password@postgres:5432/medianudge
+      SESSION_SECRET: dev-secret-key
+      PGDATABASE: medianudge
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: medianudge
+      PGPASSWORD: medianudge_password
+    ports:
+      - "3001:5000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./uploads:/app/uploads
+    networks:
+      - medianudge-network
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  medianudge-network:
+    driver: bridge

@@ -97,6 +97,10 @@ Preferred communication style: Simple, everyday language.
 ## Changelog
 
 Changelog:
+- July 14, 2025. Added Docker support with production and development containers
+- July 14, 2025. Created docker-compose.yml for easy local deployment without sudo privileges
+- July 14, 2025. Added comprehensive README with Docker instructions and troubleshooting
+- July 14, 2025. Added health check endpoint for container monitoring
 - July 14, 2025. Removed mandatory Replit authentication - app now fully accessible without login
 - July 14, 2025. Added delete functionality to admin interface for content management
 - July 14, 2025. Made all public features (home page, recommendations, media browsing) accessible without authentication
