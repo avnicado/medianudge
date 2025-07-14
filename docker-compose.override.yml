@@ -1,0 +1,15 @@
+# Override file for local development
+version: '3.8'
+
+services:
+  app:
+    environment:
+      # Override for local development
+      NODE_ENV: development
+      # Disable authentication completely
+      SKIP_AUTH: "true"
+    command: ["npm", "run", "dev"]
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./uploads:/app/uploads

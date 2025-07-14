@@ -8,8 +8,9 @@ import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
 
-if (!process.env.REPLIT_DOMAINS) {
-  throw new Error("Environment variable REPLIT_DOMAINS not provided");
+// Skip auth setup if running in Docker or auth is disabled
+if (!process.env.REPLIT_DOMAINS || process.env.SKIP_AUTH === "true") {
+  console.log("Skipping Replit authentication setup");
 }
 
 const getOidcConfig = memoize(
@@ -67,6 +68,12 @@ async function upsertUser(
 }
 
 export async function setupAuth(app: Express) {
+  // Skip auth setup if running in Docker or auth is disabled
+  if (!process.env.REPLIT_DOMAINS || process.env.SKIP_AUTH === "true") {
+    console.log("Authentication disabled - running in standalone mode");
+    return;
+  }
+
   app.set("trust proxy", 1);
   app.use(getSession());
   app.use(passport.initialize());
@@ -128,6 +135,11 @@ export async function setupAuth(app: Express) {
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
+  // Skip auth if running in Docker or auth is disabled
+  if (!process.env.REPLIT_DOMAINS || process.env.SKIP_AUTH === "true") {
+    return next();
+  }
+
   const user = req.user as any;
 
   if (!req.isAuthenticated() || !user.expires_at) {

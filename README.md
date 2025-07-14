@@ -26,16 +26,29 @@ MediaNudge is a social media platform designed to cultivate education, wisdom, a
    cd medianudge
    ```
 
-2. **Start the application**:
+2. **Quick start with troubleshooting**:
    ```bash
-   docker-compose up -d
+   # Run the troubleshooting script
+   ./docker-troubleshoot.sh
    ```
 
-3. **Access the application**:
+3. **Manual startup**:
+   ```bash
+   # Start the application
+   docker-compose up -d
+   
+   # Check if it's running
+   docker-compose ps
+   
+   # View logs if there are issues
+   docker-compose logs -f
+   ```
+
+4. **Access the application**:
    - Web application: http://localhost:3000
    - PostgreSQL database: localhost:5432
 
-4. **Stop the application**:
+5. **Stop the application**:
    ```bash
    docker-compose down
    ```
@@ -197,11 +210,46 @@ npm start
 
 ## Troubleshooting
 
+### Automated Troubleshooting
+
+Run the troubleshooting script to automatically diagnose and fix common issues:
+
+```bash
+./docker-troubleshoot.sh
+```
+
 ### Common Issues
 
-1. **Port conflicts**: Change ports in docker-compose.yml if 3000 or 5432 are in use
-2. **Database connection**: Ensure PostgreSQL container is healthy before app starts
-3. **Permission issues**: Docker containers run as non-root user by default
+1. **Connection Refused Error**:
+   ```bash
+   # Check if containers are running
+   docker-compose ps
+   
+   # Restart containers
+   docker-compose down && docker-compose up -d
+   
+   # Check application logs
+   docker-compose logs app
+   ```
+
+2. **Port conflicts**: 
+   ```bash
+   # Check what's using port 3000
+   lsof -i :3000
+   
+   # Kill process or change port in docker-compose.yml
+   ```
+
+3. **Database connection issues**:
+   ```bash
+   # Check PostgreSQL logs
+   docker-compose logs postgres
+   
+   # Connect to database directly
+   docker-compose exec postgres psql -U medianudge -d medianudge
+   ```
+
+4. **Authentication errors**: The app disables authentication in Docker mode automatically
 
 ### Logs
 
@@ -215,6 +263,27 @@ docker-compose logs postgres
 
 # Follow logs in real-time
 docker-compose logs -f app
+
+# Check container health
+docker-compose ps
+```
+
+### Manual Debugging
+
+```bash
+# Enter the app container
+docker-compose exec app sh
+
+# Check environment variables
+docker-compose exec app env
+
+# Test health endpoint
+curl http://localhost:3000/api/health
+
+# Rebuild containers from scratch
+docker-compose down -v
+docker-compose build --no-cache
+docker-compose up -d
 ```
 
 ### Database Access
