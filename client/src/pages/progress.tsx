@@ -288,10 +288,10 @@ export default function Progress() {
                 <div>
                   <p className="text-sm font-medium text-slate-600">Wisdom Score</p>
                   <p className="text-2xl font-bold text-purple-600">
-                    {getWisdomLevel(user?.wisdomScore || 0)}
+                    {getWisdomLevel(0)}
                   </p>
                   <p className="text-sm text-slate-500">
-                    {getWisdomPercentile(user?.wisdomScore || 0)} percentile
+                    {getWisdomPercentile(0)} percentile
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
@@ -307,7 +307,7 @@ export default function Progress() {
                 <div>
                   <p className="text-sm font-medium text-slate-600">Critic Score</p>
                   <p className="text-2xl font-bold text-yellow-600">
-                    {user?.criticScore?.toFixed(1) || '0.0'}/5
+                    0.0/5
                   </p>
                   <p className="text-sm text-slate-500">Review quality</p>
                 </div>

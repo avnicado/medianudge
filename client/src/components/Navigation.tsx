@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,14 +12,10 @@ import {
 import { Brain, Search, Menu, X } from "lucide-react";
 
 export default function Navigation() {
-  const { user } = useAuth();
   const [location] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const wisdomLevel = user?.wisdomScore >= 800 ? "PhD Level" : 
-                     user?.wisdomScore >= 600 ? "Master's Level" : 
-                     user?.wisdomScore >= 400 ? "College Senior+" : 
-                     user?.wisdomScore >= 200 ? "College Junior" : "High School";
+  const wisdomLevel = "Explorer"; // Default level for all users
 
   const navLinks = [
     { href: "/", label: "Discover", active: location === "/" },
@@ -69,11 +64,11 @@ export default function Navigation() {
             <div className="flex items-center space-x-2">
               <Avatar className="w-10 h-10">
                 <AvatarImage 
-                  src={user?.profileImageUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"} 
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" 
                   alt="User profile" 
                 />
                 <AvatarFallback>
-                  {user?.firstName?.[0] || 'U'}{user?.lastName?.[0] || ''}
+                  EX
                 </AvatarFallback>
               </Avatar>
               
@@ -82,7 +77,7 @@ export default function Navigation() {
                   <Button variant="ghost" className="text-sm">
                     <div className="text-left">
                       <div className="font-medium text-slate-900">
-                        {user?.firstName} {user?.lastName}
+                        Explorer
                       </div>
                       <div className="text-xs text-purple-600">
                         Wisdom: {wisdomLevel}
@@ -92,7 +87,7 @@ export default function Navigation() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem>
-                    <Link href={`/profile/${user?.id}`}>
+                    <Link href="/profile">
                       <a className="w-full">My Profile</a>
                     </Link>
                   </DropdownMenuItem>
@@ -102,7 +97,7 @@ export default function Navigation() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <a href="/api/logout" className="w-full">Logout</a>
+                    <a href="/admin/upload" className="w-full">Admin</a>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
