@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/Navigation";
 import StarRating from "@/components/StarRating";
@@ -54,54 +52,40 @@ const guidingQuestionSchema = z.object({
 
 export default function Progress() {
   const { toast } = useToast();
-  const { user, isAuthenticated, isLoading } = useAuth();
   const queryClient = useQueryClient();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
+  // No authentication required - show public progress features
 
-  // Fetch progress data
+  // Fetch progress data (no authentication required)
   const { data: yearlyGoal } = useQuery({
     queryKey: ["/api/user/yearly-goal", selectedYear],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific data
   });
 
   const { data: mediaRatings } = useQuery({
     queryKey: ["/api/user/media-ratings"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific data
   });
 
   const { data: guidingQuestions } = useQuery({
     queryKey: ["/api/guiding-questions"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific data
   });
 
   const { data: userContent } = useQuery({
     queryKey: ["/api/user/content"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific data
   });
 
   const { data: weeklyChallenge } = useQuery({
     queryKey: ["/api/weekly-challenge"],
-    enabled: isAuthenticated,
+    enabled: true, // Enable public data
   });
 
   const { data: challengeProgress } = useQuery({
     queryKey: ["/api/user/challenge-progress", weeklyChallenge?.id],
-    enabled: isAuthenticated && !!weeklyChallenge?.id,
+    enabled: false, // Disable user-specific data
   });
 
   // Forms
@@ -136,17 +120,6 @@ export default function Progress() {
       });
     },
     onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
       toast({
         title: "Error",
         description: "Failed to update yearly goals",
@@ -168,17 +141,6 @@ export default function Progress() {
       });
     },
     onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
       toast({
         title: "Error",
         description: "Failed to add guiding question",
@@ -199,17 +161,6 @@ export default function Progress() {
       });
     },
     onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
       toast({
         title: "Error",
         description: "Failed to delete guiding question",
@@ -231,17 +182,7 @@ export default function Progress() {
     }
   }, [yearlyGoal, selectedYear]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
+  // No authentication required - show content to all users
 
   const getWisdomLevel = (score: number) => {
     if (score >= 800) return "PhD Level";

@@ -1,8 +1,5 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { isUnauthorizedError } from "@/lib/authUtils";
 import Navigation from "@/components/Navigation";
 import UserCard from "@/components/UserCard";
 import MediaCard from "@/components/MediaCard";
@@ -32,60 +29,34 @@ import {
 
 export default function Social() {
   const { toast } = useToast();
-  const { user, isAuthenticated, isLoading } = useAuth();
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
-
-  // Fetch social data
+  // Fetch social data (no authentication required)
   const { data: recentActivity } = useQuery({
     queryKey: ["/api/user/activity"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific data
   });
 
   const { data: topUsers } = useQuery({
     queryKey: ["/api/top-users"],
-    enabled: isAuthenticated,
+    enabled: true, // Enable public data
   });
 
   const { data: followers } = useQuery({
     queryKey: ["/api/user/followers"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific data
   });
 
   const { data: following } = useQuery({
     queryKey: ["/api/user/following"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific data
   });
 
   const { data: userContent } = useQuery({
     queryKey: ["/api/user/content"],
-    enabled: isAuthenticated,
+    enabled: false, // Disable user-specific data
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
+  // No authentication required - show content to all users
 
   const getWisdomLevel = (score: number) => {
     if (score >= 800) return "PhD Level";
