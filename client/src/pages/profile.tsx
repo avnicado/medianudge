@@ -33,59 +33,114 @@ import {
 
 export default function Profile() {
   const { userId } = useParams();
-  const { user: currentUser, isAuthenticated, isLoading } = useAuth();
-  const { toast } = useToast();
   
-  // Use current user's ID if no userId provided
-  const profileUserId = userId || currentUser?.id;
+  // No authentication required - show demo profile
+  const profileUserId = userId || "demo-user";
+  const isOwnProfile = true; // Always show as own profile in demo mode
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
-
-  const { data: profileData, isLoading: profileLoading } = useQuery({
-    queryKey: ["/api/profile", profileUserId],
-    enabled: isAuthenticated && !!profileUserId,
-  });
-
-  const { data: followers } = useQuery({
-    queryKey: ["/api/user/followers"],
-    enabled: isAuthenticated && profileUserId === currentUser?.id,
-  });
-
-  const { data: following } = useQuery({
-    queryKey: ["/api/user/following"],
-    enabled: isAuthenticated && profileUserId === currentUser?.id,
-  });
-
-  if (isLoading || profileLoading) {
-    return (
-      <div className="min-h-screen bg-slate-50">
-        <Navigation />
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated || !profileData) {
-    return null;
-  }
+  // Demo profile data
+  const profileData = {
+    user: {
+      id: "demo-user",
+      firstName: "Demo",
+      lastName: "User",
+      email: "demo@example.com",
+      profileImageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+      wisdomScore: 450,
+      criticScore: 4.2,
+      createdAt: "2024-01-01"
+    },
+    guidingQuestions: [
+      {
+        id: 1,
+        question: "How can I apply systems thinking to solve complex problems?",
+        userId: "demo-user",
+        createdAt: "2024-01-01"
+      },
+      {
+        id: 2,
+        question: "What are the ethical implications of AI development?",
+        userId: "demo-user",
+        createdAt: "2024-01-05"
+      },
+      {
+        id: 3,
+        question: "How do I balance depth vs breadth in learning?",
+        userId: "demo-user",
+        createdAt: "2024-01-10"
+      }
+    ],
+    mediaRatings: [
+      {
+        id: 1,
+        rating: 5,
+        review: "Excellent book on programming practices",
+        media: { id: 1, title: "Clean Code", type: "book", author: "Robert C. Martin" },
+        createdAt: "2024-01-15"
+      },
+      {
+        id: 2,
+        rating: 4,
+        review: "Great course on machine learning fundamentals",
+        media: { id: 2, title: "Machine Learning by Andrew Ng", type: "course", author: "Andrew Ng" },
+        createdAt: "2024-02-20"
+      },
+      {
+        id: 3,
+        rating: 5,
+        review: "Fascinating historical podcast series",
+        media: { id: 3, title: "Hardcore History", type: "podcast", author: "Dan Carlin" },
+        createdAt: "2024-03-10"
+      },
+      {
+        id: 4,
+        rating: 4,
+        review: "Mind-bending film with great cinematography",
+        media: { id: 4, title: "Inception", type: "movie", author: "Christopher Nolan" },
+        createdAt: "2024-01-25"
+      },
+      {
+        id: 5,
+        rating: 5,
+        review: "Brilliant puzzle game with excellent writing",
+        media: { id: 5, title: "Portal 2", type: "game", author: "Valve" },
+        createdAt: "2024-02-05"
+      }
+    ],
+    userContent: [
+      {
+        id: 1,
+        title: "My Reading Journey in 2024",
+        content: "Reflections on the books I've read this year and how they've shaped my thinking...",
+        type: "reflection",
+        createdAt: "2024-03-15"
+      },
+      {
+        id: 2,
+        title: "Key Takeaways from Machine Learning Course",
+        content: "Summary of the most important concepts I learned from Andrew Ng's course...",
+        type: "summary",
+        createdAt: "2024-02-28"
+      }
+    ],
+    yearlyGoal: {
+      id: 1,
+      year: 2024,
+      booksTarget: 24,
+      booksCompleted: 8,
+      coursesTarget: 6,
+      coursesCompleted: 2,
+      podcastsTarget: 12,
+      podcastsCompleted: 5,
+      debatesTarget: 4,
+      debatesCompleted: 1,
+      userId: "demo-user"
+    },
+    followersCount: 145,
+    followingCount: 89
+  };
 
   const { user: profileUser, guidingQuestions, mediaRatings, userContent, yearlyGoal } = profileData;
-  const isOwnProfile = profileUserId === currentUser?.id;
 
   const getWisdomLevel = (score: number) => {
     if (score >= 800) return "PhD Level";

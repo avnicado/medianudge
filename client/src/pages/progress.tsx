@@ -55,38 +55,115 @@ export default function Progress() {
   const queryClient = useQueryClient();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  // No authentication required - show public progress features
+  // No authentication required - show dummy progress data
+  const yearlyGoal = {
+    id: 1,
+    year: selectedYear,
+    booksTarget: 24,
+    booksCompleted: 8,
+    coursesTarget: 6,
+    coursesCompleted: 2,
+    podcastsTarget: 12,
+    podcastsCompleted: 5,
+    debatesTarget: 4,
+    debatesCompleted: 1,
+    userId: "demo-user"
+  };
 
-  // Fetch progress data (no authentication required)
-  const { data: yearlyGoal } = useQuery({
-    queryKey: ["/api/user/yearly-goal", selectedYear],
-    enabled: false, // Disable user-specific data
-  });
+  const mediaRatings = [
+    {
+      id: 1,
+      rating: 5,
+      review: "Excellent book on programming practices",
+      media: { id: 1, title: "Clean Code", type: "book", author: "Robert C. Martin" },
+      createdAt: "2024-01-15"
+    },
+    {
+      id: 2,
+      rating: 4,
+      review: "Great course on machine learning fundamentals",
+      media: { id: 2, title: "Machine Learning by Andrew Ng", type: "course", author: "Andrew Ng" },
+      createdAt: "2024-02-20"
+    },
+    {
+      id: 3,
+      rating: 5,
+      review: "Fascinating historical podcast series",
+      media: { id: 3, title: "Hardcore History", type: "podcast", author: "Dan Carlin" },
+      createdAt: "2024-03-10"
+    },
+    {
+      id: 4,
+      rating: 4,
+      review: "Mind-bending film with great cinematography",
+      media: { id: 4, title: "Inception", type: "movie", author: "Christopher Nolan" },
+      createdAt: "2024-01-25"
+    },
+    {
+      id: 5,
+      rating: 5,
+      review: "Brilliant puzzle game with excellent writing",
+      media: { id: 5, title: "Portal 2", type: "game", author: "Valve" },
+      createdAt: "2024-02-05"
+    },
+    {
+      id: 6,
+      rating: 4,
+      review: "Engaging debate on current issues",
+      media: { id: 6, title: "Intelligence Squared", type: "debate", author: "Various" },
+      createdAt: "2024-03-01"
+    }
+  ];
 
-  const { data: mediaRatings } = useQuery({
-    queryKey: ["/api/user/media-ratings"],
-    enabled: false, // Disable user-specific data
-  });
+  const guidingQuestions = [
+    {
+      id: 1,
+      question: "How can I apply systems thinking to solve complex problems?",
+      userId: "demo-user",
+      createdAt: "2024-01-01"
+    },
+    {
+      id: 2,
+      question: "What are the ethical implications of AI development?",
+      userId: "demo-user",
+      createdAt: "2024-01-05"
+    },
+    {
+      id: 3,
+      question: "How do I balance depth vs breadth in learning?",
+      userId: "demo-user",
+      createdAt: "2024-01-10"
+    }
+  ];
 
-  const { data: guidingQuestions } = useQuery({
-    queryKey: ["/api/guiding-questions"],
-    enabled: false, // Disable user-specific data
-  });
-
-  const { data: userContent } = useQuery({
-    queryKey: ["/api/user/content"],
-    enabled: false, // Disable user-specific data
-  });
+  const userContent = [
+    {
+      id: 1,
+      title: "My Reading Journey in 2024",
+      content: "Reflections on the books I've read this year and how they've shaped my thinking...",
+      type: "reflection",
+      createdAt: "2024-03-15"
+    },
+    {
+      id: 2,
+      title: "Key Takeaways from Machine Learning Course",
+      content: "Summary of the most important concepts I learned from Andrew Ng's course...",
+      type: "summary",
+      createdAt: "2024-02-28"
+    }
+  ];
 
   const { data: weeklyChallenge } = useQuery({
     queryKey: ["/api/weekly-challenge"],
     enabled: true, // Enable public data
   });
 
-  const { data: challengeProgress } = useQuery({
-    queryKey: ["/api/user/challenge-progress", weeklyChallenge?.id],
-    enabled: false, // Disable user-specific data
-  });
+  const challengeProgress = {
+    challengeId: weeklyChallenge?.id || 1,
+    progress: 3,
+    target: 5,
+    completedAt: null
+  };
 
   // Forms
   const goalForm = useForm({
@@ -288,10 +365,10 @@ export default function Progress() {
                 <div>
                   <p className="text-sm font-medium text-slate-600">Wisdom Score</p>
                   <p className="text-2xl font-bold text-purple-600">
-                    {getWisdomLevel(0)}
+                    {getWisdomLevel(450)}
                   </p>
                   <p className="text-sm text-slate-500">
-                    {getWisdomPercentile(0)} percentile
+                    {getWisdomPercentile(450)} percentile
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
@@ -307,7 +384,7 @@ export default function Progress() {
                 <div>
                   <p className="text-sm font-medium text-slate-600">Critic Score</p>
                   <p className="text-2xl font-bold text-yellow-600">
-                    0.0/5
+                    4.2/5
                   </p>
                   <p className="text-sm text-slate-500">Review quality</p>
                 </div>
@@ -341,7 +418,7 @@ export default function Progress() {
                 <div>
                   <p className="text-sm font-medium text-slate-600">Total Ratings</p>
                   <p className="text-2xl font-bold text-blue-600">
-                    {mediaRatings?.length || 0}
+                    {mediaRatings.length}
                   </p>
                   <p className="text-sm text-slate-500">Media consumed</p>
                 </div>
