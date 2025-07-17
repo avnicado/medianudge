@@ -26,13 +26,7 @@ MediaNudge is a social media platform designed to cultivate education, wisdom, a
    cd medianudge
    ```
 
-2. **Quick start with troubleshooting**:
-   ```bash
-   # Run the troubleshooting script
-   ./docker-troubleshoot.sh
-   ```
-
-3. **Manual startup**:
+2. **Quick start (standalone mode - no database required)**:
    ```bash
    # Start the application
    docker-compose up -d
@@ -44,14 +38,31 @@ MediaNudge is a social media platform designed to cultivate education, wisdom, a
    docker-compose logs -f
    ```
 
+3. **With troubleshooting**:
+   ```bash
+   # Run the troubleshooting script
+   ./docker-troubleshoot.sh
+   ```
+
 4. **Access the application**:
    - Web application: http://localhost:3000
-   - PostgreSQL database: localhost:5432
+   - No database required in standalone mode
 
 5. **Stop the application**:
    ```bash
    docker-compose down
    ```
+
+### Optional: With Database
+
+If you want to use the full database version:
+
+```bash
+# Start with database
+docker-compose --profile with-db up -d
+
+# This will include PostgreSQL at localhost:5432
+```
 
 ### Development Mode
 

@@ -6,8 +6,6 @@ services:
     environment:
       # Override for local development
       NODE_ENV: development
-      # Disable authentication completely
-      SKIP_AUTH: "true"
     command: ["npm", "run", "dev"]
     volumes:
       - .:/app

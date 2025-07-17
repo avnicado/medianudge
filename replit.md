@@ -97,6 +97,12 @@ Preferred communication style: Simple, everyday language.
 ## Changelog
 
 Changelog:
+- July 17, 2025. **MAJOR**: Eliminated all Replit environment variable dependencies - app now 100% standalone
+- July 17, 2025. Created simplified storage system (storage-simple.ts) with in-memory data for Docker deployment
+- July 17, 2025. Created simplified routes (routes-simple.ts) without authentication requirements
+- July 17, 2025. Updated Docker configuration to work without database dependencies
+- July 17, 2025. Added troubleshooting script for Docker deployment issues
+- July 17, 2025. Made PostgreSQL database optional in Docker setup
 - July 14, 2025. Added Docker support with production and development containers
 - July 14, 2025. Created docker-compose.yml for easy local deployment without sudo privileges
 - July 14, 2025. Added comprehensive README with Docker instructions and troubleshooting

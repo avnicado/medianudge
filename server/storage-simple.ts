@@ -1,0 +1,210 @@
+import { MediaItem, InsertMediaItem, WeeklyChallenge, User } from "@shared/schema";
+
+// Simple in-memory storage for standalone mode
+export interface ISimpleStorage {
+  // Media items
+  getMediaItems(type?: string, limit?: number): Promise<MediaItem[]>;
+  getMediaItem(id: number): Promise<MediaItem | undefined>;
+  createMediaItem(item: InsertMediaItem): Promise<MediaItem>;
+  deleteMediaItem(id: number): Promise<void>;
+  searchMediaItems(query: string, type?: string): Promise<MediaItem[]>;
+  
+  // Weekly challenges
+  getActiveWeeklyChallenge(): Promise<WeeklyChallenge | undefined>;
+  
+  // Recommendations
+  getRecommendations(type?: string): Promise<MediaItem[]>;
+  getTopUsers(): Promise<User[]>;
+}
+
+export class SimpleStorage implements ISimpleStorage {
+  private mediaItems: MediaItem[] = [
+    {
+      id: 1,
+      title: "The Pragmatic Programmer",
+      type: "book",
+      author: "Dave Thomas, Andy Hunt",
+      description: "A guide to becoming a better programmer",
+      imageUrl: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=600&fit=crop",
+      avgRating: 4.5,
+      totalRatings: 120,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: 2,
+      title: "Clean Code",
+      type: "book",
+      author: "Robert C. Martin",
+      description: "A handbook of agile software craftsmanship",
+      imageUrl: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&h=600&fit=crop",
+      avgRating: 4.3,
+      totalRatings: 89,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: 3,
+      title: "Machine Learning by Andrew Ng",
+      type: "course",
+      author: "Andrew Ng",
+      description: "Stanford's machine learning course",
+      imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=600&fit=crop",
+      avgRating: 4.8,
+      totalRatings: 1250,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: 4,
+      title: "Hardcore History",
+      type: "podcast",
+      author: "Dan Carlin",
+      description: "Hardcore History by Dan Carlin",
+      imageUrl: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=400&h=600&fit=crop",
+      avgRating: 4.6,
+      totalRatings: 567,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: 5,
+      title: "Inception",
+      type: "movie",
+      author: "Christopher Nolan",
+      description: "A thief who steals corporate secrets through dream-sharing technology",
+      imageUrl: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=400&h=600&fit=crop",
+      avgRating: 4.4,
+      totalRatings: 890,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: 6,
+      title: "Portal 2",
+      type: "game",
+      author: "Valve",
+      description: "A puzzle-platform game with innovative mechanics",
+      imageUrl: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=400&h=600&fit=crop",
+      avgRating: 4.7,
+      totalRatings: 445,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: 7,
+      title: "Intelligence Squared",
+      type: "debate",
+      author: "Various",
+      description: "Oxford-style debates on current affairs",
+      imageUrl: "https://images.unsplash.com/photo-1559223607-b4d0555ae227?w=400&h=600&fit=crop",
+      avgRating: 4.3,
+      totalRatings: 334,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+  ];
+
+  private weeklyChallenge: WeeklyChallenge = {
+    id: 1,
+    title: "Read 5 High-Quality Articles",
+    description: "Challenge yourself to read 5 high-quality articles this week from reputable sources",
+    startDate: new Date("2024-01-01"),
+    endDate: new Date("2024-01-07"),
+    isActive: true,
+    createdAt: new Date()
+  };
+
+  private sampleUsers: User[] = [
+    {
+      id: "1",
+      email: "john@example.com",
+      firstName: "John",
+      lastName: "Doe",
+      profileImageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: "2",
+      email: "jane@example.com",
+      firstName: "Jane",
+      lastName: "Smith",
+      profileImageUrl: "https://images.unsplash.com/photo-1494790108755-2616b056d0e8?w=100&h=100&fit=crop&crop=face",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+  ];
+
+  private nextId = 8;
+
+  async getMediaItems(type?: string, limit = 20): Promise<MediaItem[]> {
+    let items = this.mediaItems;
+    
+    if (type && type !== 'all') {
+      items = items.filter(item => item.type === type);
+    }
+    
+    return items.slice(0, limit);
+  }
+
+  async getMediaItem(id: number): Promise<MediaItem | undefined> {
+    return this.mediaItems.find(item => item.id === id);
+  }
+
+  async createMediaItem(item: InsertMediaItem): Promise<MediaItem> {
+    const newItem: MediaItem = {
+      id: this.nextId++,
+      ...item,
+      avgRating: 0,
+      totalRatings: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    this.mediaItems.push(newItem);
+    return newItem;
+  }
+
+  async deleteMediaItem(id: number): Promise<void> {
+    this.mediaItems = this.mediaItems.filter(item => item.id !== id);
+  }
+
+  async searchMediaItems(query: string, type?: string): Promise<MediaItem[]> {
+    const searchTerm = query.toLowerCase();
+    let items = this.mediaItems;
+    
+    if (type && type !== 'all') {
+      items = items.filter(item => item.type === type);
+    }
+    
+    return items.filter(item => 
+      item.title.toLowerCase().includes(searchTerm) ||
+      item.author?.toLowerCase().includes(searchTerm) ||
+      item.description?.toLowerCase().includes(searchTerm)
+    );
+  }
+
+  async getActiveWeeklyChallenge(): Promise<WeeklyChallenge | undefined> {
+    return this.weeklyChallenge;
+  }
+
+  async getRecommendations(type?: string): Promise<MediaItem[]> {
+    // Return random recommendations based on type
+    let items = this.mediaItems;
+    
+    if (type && type !== 'all') {
+      items = items.filter(item => item.type === type);
+    }
+    
+    // Shuffle and return top 3
+    const shuffled = [...items].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 3);
+  }
+
+  async getTopUsers(): Promise<User[]> {
+    return this.sampleUsers;
+  }
+}
+
+export const simpleStorage = new SimpleStorage();
