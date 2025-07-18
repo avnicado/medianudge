@@ -12,6 +12,10 @@ export default function Category() {
   // Get category from URL params
   const categoryType = new URLSearchParams(location.split('?')[1] || '').get('type');
   
+  // Debug logging
+  console.log('Category - location:', location);
+  console.log('Category - categoryType:', categoryType);
+  
   const { data: mediaItems, isLoading } = useQuery({
     queryKey: ["/api/media", { type: categoryType }],
     queryFn: async () => {

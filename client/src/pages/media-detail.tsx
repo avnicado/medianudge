@@ -16,6 +16,10 @@ export default function MediaDetail() {
   // Get media ID from URL params
   const mediaId = new URLSearchParams(location.split('?')[1] || '').get('id');
   
+  // Debug logging
+  console.log('MediaDetail - location:', location);
+  console.log('MediaDetail - mediaId:', mediaId);
+  
   const { data: media, isLoading } = useQuery({
     queryKey: ["/api/media", mediaId],
     queryFn: async () => {
