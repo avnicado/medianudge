@@ -13,14 +13,7 @@ export default function Category() {
   const categoryType = new URLSearchParams(location.split('?')[1] || '').get('type');
   
   const { data: mediaItems, isLoading } = useQuery({
-    queryKey: ["/api/media", categoryType],
-    queryFn: async () => {
-      const response = await fetch(`/api/media?type=${categoryType}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch media items");
-      }
-      return response.json();
-    },
+    queryKey: [`/api/media?type=${categoryType}`],
     enabled: !!categoryType,
   });
 
@@ -123,6 +116,14 @@ export default function Category() {
           {mediaItems?.map((media: any) => (
             <MediaCard key={media.id} media={media} />
           ))}
+          
+          {(!mediaItems || mediaItems.length === 0) && (
+            <div className="col-span-full text-center py-12">
+              <Icon className={`w-16 h-16 ${typeInfo.color} mx-auto mb-4 opacity-50`} />
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">No {typeInfo.label} Found</h3>
+              <p className="text-slate-600">Check back later for new additions to this collection.</p>
+            </div>
+          )}
         </div>
 
         {mediaItems?.length === 0 && (

@@ -17,14 +17,7 @@ export default function MediaDetail() {
   const mediaId = new URLSearchParams(location.split('?')[1] || '').get('id');
   
   const { data: media, isLoading } = useQuery({
-    queryKey: ["/api/media", mediaId],
-    queryFn: async () => {
-      const response = await fetch(`/api/media/${mediaId}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch media details");
-      }
-      return response.json();
-    },
+    queryKey: [`/api/media/${mediaId}`],
     enabled: !!mediaId,
   });
 
