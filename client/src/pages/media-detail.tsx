@@ -14,10 +14,12 @@ export default function MediaDetail() {
   const [review, setReview] = useState("");
   
   // Get media ID from URL params
-  const mediaId = new URLSearchParams(location.split('?')[1] || '').get('id');
+  const urlParams = new URLSearchParams(window.location.search);
+  const mediaId = urlParams.get('id');
   
   // Debug logging
   console.log('MediaDetail - location:', location);
+  console.log('MediaDetail - window.location.search:', window.location.search);
   console.log('MediaDetail - mediaId:', mediaId);
   
   const { data: media, isLoading } = useQuery({

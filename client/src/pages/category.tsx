@@ -10,10 +10,12 @@ export default function Category() {
   const [location, setLocation] = useLocation();
   
   // Get category from URL params
-  const categoryType = new URLSearchParams(location.split('?')[1] || '').get('type');
+  const urlParams = new URLSearchParams(window.location.search);
+  const categoryType = urlParams.get('type');
   
   // Debug logging
   console.log('Category - location:', location);
+  console.log('Category - window.location.search:', window.location.search);
   console.log('Category - categoryType:', categoryType);
   
   const { data: mediaItems, isLoading } = useQuery({
