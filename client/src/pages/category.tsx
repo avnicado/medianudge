@@ -13,7 +13,14 @@ export default function Category() {
   const categoryType = new URLSearchParams(location.split('?')[1] || '').get('type');
   
   const { data: mediaItems, isLoading } = useQuery({
-    queryKey: [`/api/media?type=${categoryType}`],
+    queryKey: ["/api/media", { type: categoryType }],
+    queryFn: async () => {
+      const response = await fetch(`/api/media?type=${categoryType}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch media items");
+      }
+      return response.json();
+    },
     enabled: !!categoryType,
   });
 
