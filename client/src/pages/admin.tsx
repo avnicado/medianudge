@@ -12,9 +12,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Trash2, Edit, Eye } from "lucide-react";
+import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Trash2, Edit, Eye, Target } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const mediaItemSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -28,7 +30,12 @@ const mediaItemSchema = z.object({
   imageUrl: z.string().url().optional().or(z.literal("")),
 });
 
+const guidingQuestionSchema = z.object({
+  question: z.string().min(5, "Question must be at least 5 characters").max(500, "Question too long"),
+});
+
 type MediaItemFormData = z.infer<typeof mediaItemSchema>;
+type GuidingQuestionFormData = z.infer<typeof guidingQuestionSchema>;
 
 const mediaTypeOptions = [
   { value: "book", label: "Book", icon: BookOpen },
@@ -41,6 +48,7 @@ const mediaTypeOptions = [
 
 export default function Admin() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isQuestionDialogOpen, setIsQuestionDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -57,6 +65,13 @@ export default function Admin() {
     },
   });
 
+  const questionForm = useForm<GuidingQuestionFormData>({
+    resolver: zodResolver(guidingQuestionSchema),
+    defaultValues: {
+      question: "",
+    },
+  });
+
   // Fetch all media items
   const { data: mediaItems, isLoading } = useQuery({
     queryKey: ["/api/media"],
@@ -64,6 +79,18 @@ export default function Admin() {
       const response = await fetch("/api/media");
       if (!response.ok) {
         throw new Error("Failed to fetch media items");
+      }
+      return response.json();
+    },
+  });
+
+  // Fetch guiding questions
+  const { data: guidingQuestions, isLoading: isLoadingQuestions } = useQuery({
+    queryKey: ["/api/guiding-questions"],
+    queryFn: async () => {
+      const response = await fetch("/api/guiding-questions");
+      if (!response.ok) {
+        throw new Error("Failed to fetch guiding questions");
       }
       return response.json();
     },

@@ -46,9 +46,7 @@ const yearlyGoalSchema = z.object({
   debatesTarget: z.number().min(0),
 });
 
-const guidingQuestionSchema = z.object({
-  question: z.string().min(5).max(500),
-});
+
 
 export default function Progress() {
   const { toast } = useToast();
@@ -115,26 +113,7 @@ export default function Progress() {
     }
   ];
 
-  const guidingQuestions = [
-    {
-      id: 1,
-      question: "How can I apply systems thinking to solve complex problems?",
-      userId: "demo-user",
-      createdAt: "2024-01-01"
-    },
-    {
-      id: 2,
-      question: "What are the ethical implications of AI development?",
-      userId: "demo-user",
-      createdAt: "2024-01-05"
-    },
-    {
-      id: 3,
-      question: "How do I balance depth vs breadth in learning?",
-      userId: "demo-user",
-      createdAt: "2024-01-10"
-    }
-  ];
+
 
   const userContent = [
     {
@@ -177,12 +156,7 @@ export default function Progress() {
     },
   });
 
-  const questionForm = useForm({
-    resolver: zodResolver(guidingQuestionSchema),
-    defaultValues: {
-      question: "",
-    },
-  });
+
 
   // Mutations
   const updateGoalMutation = useMutation({
@@ -205,46 +179,7 @@ export default function Progress() {
     },
   });
 
-  const addQuestionMutation = useMutation({
-    mutationFn: async (data: any) => {
-      await apiRequest("POST", "/api/guiding-questions", data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/guiding-questions"] });
-      questionForm.reset();
-      toast({
-        title: "Success",
-        description: "Guiding question added successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to add guiding question",
-        variant: "destructive",
-      });
-    },
-  });
 
-  const deleteQuestionMutation = useMutation({
-    mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `/api/guiding-questions/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/guiding-questions"] });
-      toast({
-        title: "Success",
-        description: "Guiding question deleted successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to delete guiding question",
-        variant: "destructive",
-      });
-    },
-  });
 
   // Update form when yearlyGoal changes
   useEffect(() => {
@@ -343,10 +278,7 @@ export default function Progress() {
                 <Filter className="w-4 h-4 mr-2" />
                 Filter
               </Button>
-              <Button variant="outline" onClick={() => window.location.href = '/admin'}>
-                <Edit className="w-4 h-4 mr-2" />
-                Admin
-              </Button>
+
             </div>
           </div>
         </div>
@@ -681,78 +613,7 @@ export default function Progress() {
               </CardContent>
             </Card>
 
-            {/* Guiding Questions */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center">
-                    <Target className="w-5 h-5 text-primary mr-2" />
-                    My guiding questions
-                  </CardTitle>
-                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        <Plus className="w-4 h-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Add Guiding Question</DialogTitle>
-                      </DialogHeader>
-                      <Form {...questionForm}>
-                        <form onSubmit={questionForm.handleSubmit(onSubmitQuestion)} className="space-y-4">
-                          <FormField
-                            control={questionForm.control}
-                            name="question"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Question</FormLabel>
-                                <FormControl>
-                                  <Textarea 
-                                    placeholder="What big question drives your learning?"
-                                    {...field}
-                                  />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                          <Button 
-                            type="submit" 
-                            className="w-full"
-                            disabled={addQuestionMutation.isPending}
-                          >
-                            {addQuestionMutation.isPending ? "Adding..." : "Add Question"}
-                          </Button>
-                        </form>
-                      </Form>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {guidingQuestions?.map((question: any) => (
-                    <div key={question.id} className="flex items-start justify-between p-3 bg-slate-50 rounded-lg">
-                      <span className="text-sm text-slate-700 flex-1">"{question.question}"</span>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => deleteQuestionMutation.mutate(question.id)}
-                        disabled={deleteQuestionMutation.isPending}
-                        className="text-red-500 hover:text-red-700 ml-2"
-                      >
-                        ×
-                      </Button>
-                    </div>
-                  ))}
-                  {(!guidingQuestions || guidingQuestions.length === 0) && (
-                    <div className="text-center text-slate-500 py-4">
-                      <p className="text-sm">No guiding questions yet</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+
 
             {/* Achievements */}
             <Card>
