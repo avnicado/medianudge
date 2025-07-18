@@ -1,4 +1,4 @@
-import { MediaItem, InsertMediaItem, WeeklyChallenge, User } from "@shared/schema";
+import { MediaItem, InsertMediaItem, WeeklyChallenge, User, GuidingQuestion, InsertGuidingQuestion } from "@shared/schema";
 
 // Simple in-memory storage for standalone mode
 export interface ISimpleStorage {
@@ -15,9 +15,17 @@ export interface ISimpleStorage {
   // Recommendations
   getRecommendations(type?: string): Promise<MediaItem[]>;
   getTopUsers(): Promise<User[]>;
+  
+  // Guiding questions
+  getGuidingQuestions(): Promise<GuidingQuestion[]>;
+  createGuidingQuestion(question: InsertGuidingQuestion): Promise<GuidingQuestion>;
+  deleteGuidingQuestion(id: number): Promise<void>;
 }
 
 export class SimpleStorage implements ISimpleStorage {
+  private guidingQuestions: GuidingQuestion[] = [];
+  private nextQuestionId = 1;
+  
   private mediaItems: MediaItem[] = [
     {
       id: 1,
@@ -204,6 +212,29 @@ export class SimpleStorage implements ISimpleStorage {
 
   async getTopUsers(): Promise<User[]> {
     return this.sampleUsers;
+  }
+
+  async getGuidingQuestions(): Promise<GuidingQuestion[]> {
+    return this.guidingQuestions;
+  }
+
+  async createGuidingQuestion(questionData: InsertGuidingQuestion): Promise<GuidingQuestion> {
+    const question: GuidingQuestion = {
+      id: this.nextQuestionId++,
+      question: questionData.question,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    this.guidingQuestions.push(question);
+    return question;
+  }
+
+  async deleteGuidingQuestion(id: number): Promise<void> {
+    const index = this.guidingQuestions.findIndex(q => q.id === id);
+    if (index !== -1) {
+      this.guidingQuestions.splice(index, 1);
+    }
   }
 }
 

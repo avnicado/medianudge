@@ -137,10 +137,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Guiding questions routes
+  app.get('/api/guiding-questions', async (req, res) => {
+    try {
+      const questions = await simpleStorage.getGuidingQuestions();
+      res.json(questions);
+    } catch (error) {
+      console.error("Error fetching guiding questions:", error);
+      res.status(500).json({ message: "Failed to fetch guiding questions" });
+    }
+  });
+
+  app.post('/api/guiding-questions', async (req, res) => {
+    try {
+      const { question } = req.body;
+      if (!question || typeof question !== 'string') {
+        return res.status(400).json({ message: "Question is required" });
+      }
+      
+      const createdQuestion = await simpleStorage.createGuidingQuestion({ question });
+      res.json(createdQuestion);
+    } catch (error) {
+      console.error("Error creating guiding question:", error);
+      res.status(500).json({ message: "Failed to create guiding question" });
+    }
+  });
+
+  app.delete('/api/guiding-questions/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await simpleStorage.deleteGuidingQuestion(id);
+      res.json({ success: true, message: "Guiding question deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting guiding question:", error);
+      res.status(500).json({ message: "Failed to delete guiding question" });
+    }
+  });
+
   // Disabled user-specific routes (return empty responses)
-  app.get('/api/guiding-questions', (req, res) => res.json([]));
-  app.post('/api/guiding-questions', (req, res) => res.json({ success: true, message: "Feature disabled in standalone mode" }));
-  app.delete('/api/guiding-questions/:id', (req, res) => res.json({ success: true, message: "Feature disabled in standalone mode" }));
   
   app.get('/api/user/media-ratings', (req, res) => res.json([]));
   app.post('/api/user/media-ratings', (req, res) => res.json({ success: true, message: "Feature disabled in standalone mode" }));
