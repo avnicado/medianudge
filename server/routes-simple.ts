@@ -60,6 +60,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin routes
+  app.post('/api/media', async (req, res) => {
+    try {
+      const validatedData = insertMediaItemSchema.parse(req.body);
+      const item = await simpleStorage.createMediaItem(validatedData);
+      res.json(item);
+    } catch (error) {
+      console.error("Error creating media item:", error);
+      res.status(500).json({ message: "Failed to create media item" });
+    }
+  });
+
   app.post('/api/admin/media', async (req, res) => {
     try {
       const validatedData = insertMediaItemSchema.parse(req.body);
@@ -68,6 +79,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating media item:", error);
       res.status(500).json({ message: "Failed to create media item" });
+    }
+  });
+
+  app.delete('/api/media/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await simpleStorage.deleteMediaItem(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting media item:", error);
+      res.status(500).json({ message: "Failed to delete media item" });
     }
   });
 

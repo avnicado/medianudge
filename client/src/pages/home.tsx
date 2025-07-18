@@ -151,7 +151,7 @@ export default function Home() {
                   <MediaCard key={book.id} media={book} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=book'}>
                 View All Books
               </Button>
             </CardContent>
@@ -174,7 +174,7 @@ export default function Home() {
                   <MediaCard key={course.id} media={course} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=course'}>
                 View All Courses
               </Button>
             </CardContent>
@@ -197,7 +197,7 @@ export default function Home() {
                   <MediaCard key={podcast.id} media={podcast} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=podcast'}>
                 View All Podcasts
               </Button>
             </CardContent>
@@ -223,7 +223,7 @@ export default function Home() {
                   <MediaCard key={movie.id} media={movie} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=movie'}>
                 View All Movies
               </Button>
             </CardContent>
@@ -246,7 +246,7 @@ export default function Home() {
                   <MediaCard key={game.id} media={game} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=game'}>
                 View All Games
               </Button>
             </CardContent>
@@ -269,7 +269,7 @@ export default function Home() {
                   <MediaCard key={debate.id} media={debate} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=debate'}>
                 View All Debates
               </Button>
             </CardContent>

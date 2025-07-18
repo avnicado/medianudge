@@ -97,6 +97,15 @@ Preferred communication style: Simple, everyday language.
 ## Changelog
 
 Changelog:
+- July 18, 2025. **MAJOR**: Complete navigation overhaul with proper detail and category pages
+- July 18, 2025. Created MediaDetail page for viewing individual media items with ratings and reviews
+- July 18, 2025. Created Category page for browsing all items of a specific type (books, courses, etc.)
+- July 18, 2025. Fixed all "View Details" buttons to show proper media detail pages
+- July 18, 2025. Fixed all "View All" buttons to show filtered category pages
+- July 18, 2025. Fixed guiding questions add/delete functionality with proper dialog management
+- July 18, 2025. Enhanced admin page with comprehensive goal management settings
+- July 18, 2025. Added admin access button to Progress page for better UX
+- July 18, 2025. Updated all API routes to support media filtering by type and individual item fetching
 - July 17, 2025. **MAJOR**: Eliminated all Replit environment variable dependencies - app now 100% standalone
 - July 17, 2025. Created simplified storage system (storage-simple.ts) with in-memory data for Docker deployment
 - July 17, 2025. Created simplified routes (routes-simple.ts) without authentication requirements

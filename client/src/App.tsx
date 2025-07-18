@@ -9,6 +9,8 @@ import Profile from "@/pages/profile";
 import Social from "@/pages/social";
 import Progress from "@/pages/progress";
 import Admin from "@/pages/admin";
+import MediaDetail from "@/pages/media-detail";
+import Category from "@/pages/category";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -18,7 +20,9 @@ function Router() {
       <Route path="/profile/:userId?" component={Profile} />
       <Route path="/social" component={Social} />
       <Route path="/progress" component={Progress} />
-      <Route path="/admin/upload" component={Admin} />
+      <Route path="/admin" component={Admin} />
+      <Route path="/media-detail" component={MediaDetail} />
+      <Route path="/category" component={Category} />
       <Route component={NotFound} />
     </Switch>
   );

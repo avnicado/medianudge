@@ -104,7 +104,7 @@ export default function MediaCard({ media, onRate, showRating = true }: MediaCar
                 {media.totalRatings || 0} ratings
               </span>
               
-              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" onClick={() => window.location.href = '/social'}>
+              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" onClick={() => window.location.href = `/media-detail?id=${media.id}`}>
                 View Details
               </Button>
             </div>

@@ -305,8 +305,14 @@ export default function Progress() {
     updateGoalMutation.mutate(data);
   };
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  
   const onSubmitQuestion = (data: any) => {
-    addQuestionMutation.mutate(data);
+    addQuestionMutation.mutate(data, {
+      onSuccess: () => {
+        setIsDialogOpen(false);
+      }
+    });
   };
 
   return (
@@ -683,7 +689,7 @@ export default function Progress() {
                     <Target className="w-5 h-5 text-primary mr-2" />
                     My guiding questions
                   </CardTitle>
-                  <Dialog>
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                       <Button variant="outline" size="sm">
                         <Plus className="w-4 h-4" />
