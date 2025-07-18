@@ -137,6 +137,11 @@ export default function Progress() {
     enabled: true, // Enable public data
   });
 
+  // Fetch guiding questions for read-only display
+  const { data: guidingQuestions } = useQuery({
+    queryKey: ["/api/guiding-questions"],
+  });
+
   const challengeProgress = {
     challengeId: weeklyChallenge?.id || 1,
     progress: 3,
@@ -614,6 +619,32 @@ export default function Progress() {
             </Card>
 
 
+
+            {/* Guiding Questions - Read Only */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Target className="w-5 h-5 text-primary mr-2" />
+                  My Guiding Questions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {guidingQuestions?.map((question: any) => (
+                    <div key={question.id} className="p-3 bg-slate-50 rounded-lg">
+                      <span className="text-sm text-slate-700">"{question.question}"</span>
+                    </div>
+                  ))}
+                  {(!guidingQuestions || guidingQuestions.length === 0) && (
+                    <div className="text-center text-slate-500 py-4">
+                      <Target className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                      <p className="text-sm">No guiding questions yet</p>
+                      <p className="text-xs text-slate-400 mt-1">Visit admin to add questions</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Achievements */}
             <Card>

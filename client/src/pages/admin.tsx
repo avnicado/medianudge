@@ -112,7 +112,6 @@ export default function Admin() {
         description: "Media item created successfully!",
       });
       form.reset();
-      // Invalidate recommendations cache to refresh the home page
       queryClient.invalidateQueries({ queryKey: ["/api/recommendations"] });
       queryClient.invalidateQueries({ queryKey: ["/api/media"] });
     },
@@ -134,7 +133,6 @@ export default function Admin() {
         title: "Success",
         description: "Media item deleted successfully!",
       });
-      // Invalidate caches to refresh the data
       queryClient.invalidateQueries({ queryKey: ["/api/recommendations"] });
       queryClient.invalidateQueries({ queryKey: ["/api/media"] });
     },
@@ -142,6 +140,48 @@ export default function Admin() {
       toast({
         title: "Error",
         description: error.message || "Failed to delete media item",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const addQuestionMutation = useMutation({
+    mutationFn: async (data: GuidingQuestionFormData) => {
+      await apiRequest("POST", "/api/guiding-questions", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/guiding-questions"] });
+      questionForm.reset();
+      setIsQuestionDialogOpen(false);
+      toast({
+        title: "Success",
+        description: "Guiding question added successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to add guiding question",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteQuestionMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/guiding-questions/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/guiding-questions"] });
+      toast({
+        title: "Success",
+        description: "Guiding question deleted successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete guiding question",
         variant: "destructive",
       });
     },
@@ -162,373 +202,420 @@ export default function Admin() {
     }
   };
 
+  const onSubmitQuestion = async (data: GuidingQuestionFormData) => {
+    await addQuestionMutation.mutateAsync(data);
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-4xl mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Admin Panel</h1>
-          <p className="text-slate-600">Manage media items and user goals</p>
+          <p className="text-slate-600">Manage media items, user goals, and guiding questions</p>
         </div>
 
-        {/* Goal Management Section */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Edit className="w-5 h-5 mr-2" />
-              Goal Management Settings
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div>
-                <Label htmlFor="books-completed">Books Completed</Label>
-                <Input 
-                  id="books-completed"
-                  type="number"
-                  defaultValue="8"
-                  min="0"
-                  className="mt-1"
-                />
-                <p className="text-sm text-slate-500 mt-1">out of 24 target</p>
-              </div>
-              
-              <div>
-                <Label htmlFor="courses-completed">Courses Completed</Label>
-                <Input 
-                  id="courses-completed"
-                  type="number"
-                  defaultValue="2"
-                  min="0"
-                  className="mt-1"
-                />
-                <p className="text-sm text-slate-500 mt-1">out of 6 target</p>
-              </div>
-              
-              <div>
-                <Label htmlFor="podcasts-completed">Podcasts Completed</Label>
-                <Input 
-                  id="podcasts-completed"
-                  type="number"
-                  defaultValue="5"
-                  min="0"
-                  className="mt-1"
-                />
-                <p className="text-sm text-slate-500 mt-1">out of 12 target</p>
-              </div>
-              
-              <div>
-                <Label htmlFor="debates-completed">Debates Completed</Label>
-                <Input 
-                  id="debates-completed"
-                  type="number"
-                  defaultValue="1"
-                  min="0"
-                  className="mt-1"
-                />
-                <p className="text-sm text-slate-500 mt-1">out of 4 target</p>
-              </div>
-            </div>
-            
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="wisdom-score">Wisdom Score</Label>
-                <Input 
-                  id="wisdom-score"
-                  type="number"
-                  defaultValue="450"
-                  min="0"
-                  max="1000"
-                  className="mt-1"
-                />
-                <p className="text-sm text-slate-500 mt-1">Current wisdom level</p>
-              </div>
-              
-              <div>
-                <Label htmlFor="critic-score">Critic Score</Label>
-                <Input 
-                  id="critic-score"
-                  type="number"
-                  step="0.1"
-                  defaultValue="4.2"
-                  min="0"
-                  max="5"
-                  className="mt-1"
-                />
-                <p className="text-sm text-slate-500 mt-1">Review quality rating</p>
-              </div>
-            </div>
-            
-            <div className="mt-6 flex space-x-3">
-              <Button className="bg-green-600 hover:bg-green-700 text-white">
-                Save Goal Settings
-              </Button>
-              <Button variant="outline">
-                Reset to Demo Values
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="media" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="media">Media Items</TabsTrigger>
+            <TabsTrigger value="goals">Goal Settings</TabsTrigger>
+            <TabsTrigger value="questions">Guiding Questions</TabsTrigger>
+          </TabsList>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Upload className="w-5 h-5 mr-2" />
-              Add New Media Item
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter media title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select media type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {mediaTypeOptions.map((option) => {
-                              const Icon = option.icon;
-                              return (
-                                <SelectItem key={option.value} value={option.value}>
-                                  <div className="flex items-center">
-                                    <Icon className="w-4 h-4 mr-2" />
-                                    {option.label}
-                                  </div>
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="author"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Author/Creator</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter author or creator name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="imageUrl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Image URL (Optional)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://example.com/image.jpg" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Optional URL for the media item image
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="avgRating"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Average Rating</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            min="1" 
-                            max="5" 
-                            step="0.1" 
-                            placeholder="4.0"
-                            {...field}
-                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 4.0)}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Rating from 1.0 to 5.0
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="totalRatings"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Total Ratings</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            min="0" 
-                            placeholder="0"
-                            {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Number of users who have rated this item
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Enter a detailed description of the media item..."
-                          rows={4}
-                          {...field}
+          <TabsContent value="media" className="mt-6">
+            <div className="space-y-8">
+              {/* Add New Media Item */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Upload className="w-5 h-5 mr-2" />
+                    Add New Media Item
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="title"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Title</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Enter media title" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
-                      </FormControl>
-                      <FormDescription>
-                        Provide a compelling description that helps users understand the value of this content
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
-                <div className="flex justify-end space-x-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => form.reset()}
-                    disabled={isSubmitting}
-                  >
-                    Reset Form
+                        <FormField
+                          control={form.control}
+                          name="type"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Type</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select media type" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {mediaTypeOptions.map((option) => {
+                                    const Icon = option.icon;
+                                    return (
+                                      <SelectItem key={option.value} value={option.value}>
+                                        <div className="flex items-center">
+                                          <Icon className="w-4 h-4 mr-2" />
+                                          {option.label}
+                                        </div>
+                                      </SelectItem>
+                                    );
+                                  })}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="author"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Author/Creator</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Enter author or creator name" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="imageUrl"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Image URL (Optional)</FormLabel>
+                              <FormControl>
+                                <Input placeholder="https://example.com/image.jpg" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                placeholder="Enter a detailed description of the media item..."
+                                className="min-h-[100px]"
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="avgRating"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Average Rating</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  step="0.1"
+                                  min="1"
+                                  max="5"
+                                  placeholder="4.0"
+                                  {...field}
+                                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                />
+                              </FormControl>
+                              <FormDescription>Rating from 1 to 5 stars</FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="totalRatings"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Total Ratings</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  placeholder="0"
+                                  {...field}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                />
+                              </FormControl>
+                              <FormDescription>Number of people who rated this</FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <Button 
+                        type="submit" 
+                        className="w-full"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Creating..." : "Create Media Item"}
+                      </Button>
+                    </form>
+                  </Form>
+                </CardContent>
+              </Card>
+
+              {/* Existing Media Items */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Eye className="w-5 h-5 mr-2" />
+                    Existing Media Items ({mediaItems?.length || 0})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {isLoading ? (
+                    <div className="text-center py-8">Loading media items...</div>
+                  ) : (
+                    <ScrollArea className="h-[400px]">
+                      <div className="space-y-4">
+                        {mediaItems?.map((item: any) => (
+                          <div key={item.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2">
+                                <h3 className="font-medium text-slate-900">{item.title}</h3>
+                                <Badge variant="secondary">{item.type}</Badge>
+                              </div>
+                              <p className="text-sm text-slate-600">{item.author}</p>
+                              <p className="text-sm text-slate-500 mt-1">{item.description}</p>
+                              <div className="flex items-center space-x-4 mt-2">
+                                <span className="text-sm text-slate-600">
+                                  ⭐ {item.avgRating?.toFixed(1)} ({item.totalRatings} ratings)
+                                </span>
+                              </div>
+                            </div>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="goals" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Edit className="w-5 h-5 mr-2" />
+                  Goal Management Settings
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div>
+                    <Label htmlFor="books-completed">Books Completed</Label>
+                    <Input 
+                      id="books-completed"
+                      type="number"
+                      defaultValue="8"
+                      min="0"
+                      className="mt-1"
+                    />
+                    <p className="text-sm text-slate-500 mt-1">out of 24 target</p>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="courses-completed">Courses Completed</Label>
+                    <Input 
+                      id="courses-completed"
+                      type="number"
+                      defaultValue="2"
+                      min="0"
+                      className="mt-1"
+                    />
+                    <p className="text-sm text-slate-500 mt-1">out of 6 target</p>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="podcasts-completed">Podcasts Completed</Label>
+                    <Input 
+                      id="podcasts-completed"
+                      type="number"
+                      defaultValue="5"
+                      min="0"
+                      className="mt-1"
+                    />
+                    <p className="text-sm text-slate-500 mt-1">out of 12 target</p>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="debates-completed">Debates Completed</Label>
+                    <Input 
+                      id="debates-completed"
+                      type="number"
+                      defaultValue="1"
+                      min="0"
+                      className="mt-1"
+                    />
+                    <p className="text-sm text-slate-500 mt-1">out of 4 target</p>
+                  </div>
+                </div>
+                
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="wisdom-score">Wisdom Score</Label>
+                    <Input 
+                      id="wisdom-score"
+                      type="number"
+                      defaultValue="450"
+                      min="0"
+                      max="1000"
+                      className="mt-1"
+                    />
+                    <p className="text-sm text-slate-500 mt-1">Current wisdom level</p>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="critic-score">Critic Score</Label>
+                    <Input 
+                      id="critic-score"
+                      type="number"
+                      step="0.1"
+                      defaultValue="4.2"
+                      min="0"
+                      max="5"
+                      className="mt-1"
+                    />
+                    <p className="text-sm text-slate-500 mt-1">Review quality rating</p>
+                  </div>
+                </div>
+                
+                <div className="mt-6 flex space-x-3">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white">
+                    Save Goal Settings
                   </Button>
-                  <Button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="bg-primary text-white hover:bg-primary/90"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Adding...
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Media Item
-                      </>
-                    )}
+                  <Button variant="outline">
+                    Reset to Demo Values
                   </Button>
                 </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-          <h3 className="font-medium text-blue-900 mb-2">Quick Guide</h3>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• All fields except Image URL are required</li>
-            <li>• Rating should be between 1.0 and 5.0 (use decimals for precision)</li>
-            <li>• Total ratings represents how many users have rated this item</li>
-            <li>• New items will appear in the appropriate category on the home page</li>
-          </ul>
-        </div>
-
-        {/* Media Items Management */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Eye className="w-5 h-5 mr-2" />
-              Manage Media Items
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="flex justify-center items-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
-              </div>
-            ) : (
-              <ScrollArea className="h-96">
-                <div className="space-y-4">
-                  {mediaItems?.map((item: any) => {
-                    const typeOption = mediaTypeOptions.find(opt => opt.value === item.type);
-                    const Icon = typeOption?.icon || BookOpen;
-                    
-                    return (
-                      <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg bg-white">
-                        <div className="flex items-center space-x-4">
-                          <Icon className="w-5 h-5 text-slate-600" />
-                          <div>
-                            <h3 className="font-semibold text-slate-900">{item.title}</h3>
-                            <p className="text-sm text-slate-600">{item.author}</p>
-                            <div className="flex items-center space-x-2 mt-1">
-                              <Badge variant="outline" className="text-xs">
-                                {typeOption?.label || item.type}
-                              </Badge>
-                              <span className="text-xs text-slate-500">
-                                {item.avgRating ? `${item.avgRating}★` : 'No rating'} 
-                                {item.totalRatings ? ` (${item.totalRatings})` : ''}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDelete(item.id)}
-                            disabled={deleteMediaItemMutation.isPending}
+          <TabsContent value="questions" className="mt-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center">
+                    <Target className="w-5 h-5 text-primary mr-2" />
+                    Guiding Questions Management
+                  </CardTitle>
+                  <Dialog open={isQuestionDialogOpen} onOpenChange={setIsQuestionDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Question
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Add Guiding Question</DialogTitle>
+                      </DialogHeader>
+                      <Form {...questionForm}>
+                        <form onSubmit={questionForm.handleSubmit(onSubmitQuestion)} className="space-y-4">
+                          <FormField
+                            control={questionForm.control}
+                            name="question"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Question</FormLabel>
+                                <FormControl>
+                                  <Textarea 
+                                    placeholder="What big question drives your learning?"
+                                    className="min-h-[100px]"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Button 
+                            type="submit" 
+                            className="w-full"
+                            disabled={addQuestionMutation.isPending}
+                          >
+                            {addQuestionMutation.isPending ? "Adding..." : "Add Question"}
+                          </Button>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {isLoadingQuestions ? (
+                    <div className="text-center py-8">Loading questions...</div>
+                  ) : (
+                    <>
+                      {guidingQuestions?.map((question: any) => (
+                        <div key={question.id} className="flex items-start justify-between p-4 bg-slate-50 rounded-lg">
+                          <span className="text-sm text-slate-700 flex-1">"{question.question}"</span>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => deleteQuestionMutation.mutate(question.id)}
+                            disabled={deleteQuestionMutation.isPending}
+                            className="text-red-500 hover:text-red-700 ml-2"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
-                      </div>
-                    );
-                  })}
-                  {mediaItems?.length === 0 && (
-                    <div className="text-center py-8 text-slate-500">
-                      No media items found. Add some using the form above.
-                    </div>
+                      ))}
+                      {(!guidingQuestions || guidingQuestions.length === 0) && (
+                        <div className="text-center text-slate-500 py-8">
+                          <Target className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                          <p className="text-sm">No guiding questions yet</p>
+                          <p className="text-xs text-slate-400 mt-1">Add your first question to help guide your learning journey</p>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
-              </ScrollArea>
-            )}
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
