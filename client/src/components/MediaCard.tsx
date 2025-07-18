@@ -20,6 +20,9 @@ interface MediaCardProps {
 }
 
 export default function MediaCard({ media, onRate, showRating = true }: MediaCardProps) {
+  // Debug logging to ensure media has an ID
+  console.log('MediaCard - media:', media);
+
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'book':
@@ -104,7 +107,10 @@ export default function MediaCard({ media, onRate, showRating = true }: MediaCar
                 {media.totalRatings || 0} ratings
               </span>
               
-              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" onClick={() => window.location.href = `/media-detail?id=${media.id}`}>
+              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" onClick={() => {
+                console.log('Navigating to media detail with ID:', media.id);
+                window.location.href = `/media-detail?id=${media.id}`;
+              }}>
                 View Details
               </Button>
             </div>

@@ -151,7 +151,10 @@ export default function Home() {
                   <MediaCard key={book.id} media={book} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=book'}>
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => {
+                console.log('Navigating to category: book');
+                window.location.href = '/category?type=book';
+              }}>
                 View All Books
               </Button>
             </CardContent>
