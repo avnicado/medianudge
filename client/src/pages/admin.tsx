@@ -140,8 +140,107 @@ export default function Admin() {
       <div className="max-w-4xl mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Admin Panel</h1>
-          <p className="text-slate-600">Add new media items to the platform</p>
+          <p className="text-slate-600">Manage media items and user goals</p>
         </div>
+
+        {/* Goal Management Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Edit className="w-5 h-5 mr-2" />
+              Goal Management Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div>
+                <Label htmlFor="books-completed">Books Completed</Label>
+                <Input 
+                  id="books-completed"
+                  type="number"
+                  defaultValue="8"
+                  min="0"
+                  className="mt-1"
+                />
+                <p className="text-sm text-slate-500 mt-1">out of 24 target</p>
+              </div>
+              
+              <div>
+                <Label htmlFor="courses-completed">Courses Completed</Label>
+                <Input 
+                  id="courses-completed"
+                  type="number"
+                  defaultValue="2"
+                  min="0"
+                  className="mt-1"
+                />
+                <p className="text-sm text-slate-500 mt-1">out of 6 target</p>
+              </div>
+              
+              <div>
+                <Label htmlFor="podcasts-completed">Podcasts Completed</Label>
+                <Input 
+                  id="podcasts-completed"
+                  type="number"
+                  defaultValue="5"
+                  min="0"
+                  className="mt-1"
+                />
+                <p className="text-sm text-slate-500 mt-1">out of 12 target</p>
+              </div>
+              
+              <div>
+                <Label htmlFor="debates-completed">Debates Completed</Label>
+                <Input 
+                  id="debates-completed"
+                  type="number"
+                  defaultValue="1"
+                  min="0"
+                  className="mt-1"
+                />
+                <p className="text-sm text-slate-500 mt-1">out of 4 target</p>
+              </div>
+            </div>
+            
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <Label htmlFor="wisdom-score">Wisdom Score</Label>
+                <Input 
+                  id="wisdom-score"
+                  type="number"
+                  defaultValue="450"
+                  min="0"
+                  max="1000"
+                  className="mt-1"
+                />
+                <p className="text-sm text-slate-500 mt-1">Current wisdom level</p>
+              </div>
+              
+              <div>
+                <Label htmlFor="critic-score">Critic Score</Label>
+                <Input 
+                  id="critic-score"
+                  type="number"
+                  step="0.1"
+                  defaultValue="4.2"
+                  min="0"
+                  max="5"
+                  className="mt-1"
+                />
+                <p className="text-sm text-slate-500 mt-1">Review quality rating</p>
+              </div>
+            </div>
+            
+            <div className="mt-6 flex space-x-3">
+              <Button className="bg-green-600 hover:bg-green-700 text-white">
+                Save Goal Settings
+              </Button>
+              <Button variant="outline">
+                Reset to Demo Values
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

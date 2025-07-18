@@ -288,29 +288,13 @@ export default function Progress() {
 
   const getMediaTypeStats = () => {
     const stats = {
-      books: { count: 0, avgRating: 0 },
-      courses: { count: 0, avgRating: 0 },
-      podcasts: { count: 0, avgRating: 0 },
-      movies: { count: 0, avgRating: 0 },
-      debates: { count: 0, avgRating: 0 },
-      games: { count: 0, avgRating: 0 },
+      books: { count: 2, avgRating: 4.5 },
+      courses: { count: 1, avgRating: 4.0 },
+      podcasts: { count: 1, avgRating: 5.0 },
+      movies: { count: 1, avgRating: 4.0 },
+      debates: { count: 1, avgRating: 4.0 },
+      games: { count: 1, avgRating: 5.0 },
     };
-
-    mediaRatings?.forEach((rating: any) => {
-      const type = rating.media?.type || 'books';
-      if (stats[type as keyof typeof stats]) {
-        stats[type as keyof typeof stats].count++;
-        stats[type as keyof typeof stats].avgRating += rating.rating;
-      }
-    });
-
-    // Calculate averages
-    Object.keys(stats).forEach((key) => {
-      const stat = stats[key as keyof typeof stats];
-      if (stat.count > 0) {
-        stat.avgRating = stat.avgRating / stat.count;
-      }
-    });
 
     return stats;
   };
@@ -352,6 +336,10 @@ export default function Progress() {
               <Button variant="outline">
                 <Filter className="w-4 h-4 mr-2" />
                 Filter
+              </Button>
+              <Button variant="outline" onClick={() => window.location.href = '/admin'}>
+                <Edit className="w-4 h-4 mr-2" />
+                Admin
               </Button>
             </div>
           </div>
@@ -693,7 +681,7 @@ export default function Progress() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center">
                     <Target className="w-5 h-5 text-primary mr-2" />
-                    Guiding Questions
+                    My guiding questions
                   </CardTitle>
                   <Dialog>
                     <DialogTrigger asChild>

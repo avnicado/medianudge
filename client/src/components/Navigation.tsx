@@ -15,7 +15,7 @@ export default function Navigation() {
   const [location] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const wisdomLevel = "Explorer"; // Default level for all users
+  const wisdomLevel = "College Senior+"; // Default level for all users (450 score)
 
   const navLinks = [
     { href: "/", label: "Discover", active: location === "/" },
@@ -77,7 +77,7 @@ export default function Navigation() {
                   <Button variant="ghost" className="text-sm">
                     <div className="text-left">
                       <div className="font-medium text-slate-900">
-                        Explorer
+                        Demo User
                       </div>
                       <div className="text-xs text-purple-600">
                         Wisdom: {wisdomLevel}
@@ -95,9 +95,6 @@ export default function Navigation() {
                     <Link href="/progress">
                       <a className="w-full">Progress</a>
                     </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <a href="/admin/upload" className="w-full">Admin</a>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

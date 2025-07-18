@@ -99,7 +99,7 @@ export default function Home() {
 
   // No authentication required - show content to all users
 
-  const wisdomLevel = "Explorer"; // Default level for anonymous users
+  const wisdomLevel = "College Senior+"; // Default level for anonymous users (450 score)
 
   const getProgressPercentage = () => {
     return 0; // Default for anonymous users
@@ -151,7 +151,7 @@ export default function Home() {
                   <MediaCard key={book.id} media={book} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
                 View All Books
               </Button>
             </CardContent>
@@ -174,7 +174,7 @@ export default function Home() {
                   <MediaCard key={course.id} media={course} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
                 View All Courses
               </Button>
             </CardContent>
@@ -197,7 +197,7 @@ export default function Home() {
                   <MediaCard key={podcast.id} media={podcast} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
                 View All Podcasts
               </Button>
             </CardContent>
@@ -223,7 +223,7 @@ export default function Home() {
                   <MediaCard key={movie.id} media={movie} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
                 View All Movies
               </Button>
             </CardContent>
@@ -246,7 +246,7 @@ export default function Home() {
                   <MediaCard key={game.id} media={game} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
                 View All Games
               </Button>
             </CardContent>
@@ -269,7 +269,7 @@ export default function Home() {
                   <MediaCard key={debate.id} media={debate} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
+              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/social'}>
                 View All Debates
               </Button>
             </CardContent>
@@ -445,7 +445,7 @@ export default function Home() {
                 <Plus className="w-4 h-4 mr-2" />
                 Create Content
               </Button>
-              <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium">
+              <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium" onClick={() => window.location.href = '/progress'}>
                 View All Contributions
               </Button>
             </div>
