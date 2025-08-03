@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Trash2, Edit, Eye, Target } from "lucide-react";
+import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Trash2, Edit, Eye, Target, Brain, Info, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -25,8 +25,9 @@ const mediaItemSchema = z.object({
   }),
   author: z.string().min(1, "Author is required"),
   description: z.string().min(1, "Description is required"),
-  avgRating: z.number().min(1).max(5).optional(),
-  totalRatings: z.number().min(0).optional(),
+  avgMindExpanding: z.number().min(1).max(5).default(3),
+  avgInformative: z.number().min(1).max(5).default(3),
+  avgEntertaining: z.number().min(1).max(5).default(3),
   imageUrl: z.string().url().optional().or(z.literal("")),
 });
 
@@ -59,8 +60,9 @@ export default function Admin() {
       type: "book",
       author: "",
       description: "",
-      avgRating: 4.0,
-      totalRatings: 0,
+      avgMindExpanding: 3.0,
+      avgInformative: 3.0,
+      avgEntertaining: 3.0,
       imageUrl: "",
     },
   });
@@ -100,8 +102,9 @@ export default function Admin() {
     mutationFn: async (data: MediaItemFormData) => {
       const payload = {
         ...data,
-        avgRating: data.avgRating || 4.0,
-        totalRatings: data.totalRatings || 0,
+        avgMindExpanding: data.avgMindExpanding || 3.0,
+        avgInformative: data.avgInformative || 3.0,
+        avgEntertaining: data.avgEntertaining || 3.0,
         imageUrl: data.imageUrl || null,
       };
       return await apiRequest("POST", "/api/media", payload);
@@ -327,50 +330,88 @@ export default function Admin() {
                         )}
                       />
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <FormField
-                          control={form.control}
-                          name="avgRating"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Average Rating</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  step="0.1"
-                                  min="1"
-                                  max="5"
-                                  placeholder="4.0"
-                                  {...field}
-                                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                                />
-                              </FormControl>
-                              <FormDescription>Rating from 1 to 5 stars</FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                      {/* Three-Dimensional Rating System */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-slate-900">Rating Dimensions (1-5 scale)</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          <FormField
+                            control={form.control}
+                            name="avgMindExpanding"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex items-center text-purple-600">
+                                  <Brain className="w-4 h-4 mr-2" />
+                                  Mind Expanding
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    step="0.1"
+                                    min="1"
+                                    max="5"
+                                    placeholder="3.0"
+                                    {...field}
+                                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                  />
+                                </FormControl>
+                                <FormDescription>1 = Junk Food, 5 = Mind-Expanding</FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
 
-                        <FormField
-                          control={form.control}
-                          name="totalRatings"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Total Ratings</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  min="0"
-                                  placeholder="0"
-                                  {...field}
-                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                />
-                              </FormControl>
-                              <FormDescription>Number of people who rated this</FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                          <FormField
+                            control={form.control}
+                            name="avgInformative"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex items-center text-blue-600">
+                                  <Info className="w-4 h-4 mr-2" />
+                                  Informative
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    step="0.1"
+                                    min="1"
+                                    max="5"
+                                    placeholder="3.0"
+                                    {...field}
+                                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                  />
+                                </FormControl>
+                                <FormDescription>1 = Uninformative, 5 = Highly Informative</FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="avgEntertaining"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex items-center text-red-500">
+                                  <Heart className="w-4 h-4 mr-2" />
+                                  Entertaining
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    step="0.1"
+                                    min="1"
+                                    max="5"
+                                    placeholder="3.0"
+                                    {...field}
+                                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                  />
+                                </FormControl>
+                                <FormDescription>1 = Boring, 5 = Highly Entertaining</FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
                       </div>
 
                       <Button 

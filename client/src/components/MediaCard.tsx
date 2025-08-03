@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import StarRating from "@/components/StarRating";
-import { BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2 } from "lucide-react";
+import { BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Brain, Info, Heart } from "lucide-react";
 
 interface MediaCardProps {
   media: {
@@ -12,7 +12,9 @@ interface MediaCardProps {
     author?: string;
     description?: string;
     imageUrl?: string;
-    avgRating: number;
+    avgMindExpanding?: number;
+    avgInformative?: number;
+    avgEntertaining?: number;
     totalRatings: number;
   };
   onRate?: (rating: number) => void;
@@ -42,14 +44,14 @@ export default function MediaCard({ media, onRate, showRating = true }: MediaCar
     }
   };
 
-  const getRatingColor = (rating: number) => {
-    if (rating >= 4.5) return 'bg-green-100 text-green-600';
+  const getMindExpandingColor = (rating: number) => {
+    if (rating >= 4.5) return 'bg-purple-100 text-purple-600';
     if (rating >= 3.5) return 'bg-blue-100 text-blue-600';
     if (rating >= 2.5) return 'bg-yellow-100 text-yellow-600';
     return 'bg-red-100 text-red-600';
   };
 
-  const getRatingLabel = (rating: number) => {
+  const getMindExpandingLabel = (rating: number) => {
     if (rating >= 4.5) return 'Mind-Expanding';
     if (rating >= 3.5) return 'Thought-Provoking';
     if (rating >= 2.5) return 'Decent';
@@ -78,22 +80,48 @@ export default function MediaCard({ media, onRate, showRating = true }: MediaCar
               <p className="text-sm text-slate-600 truncate">{media.author}</p>
             )}
             
-            <div className="flex items-center space-x-2 mt-2">
-              <div className="flex items-center">
-                <StarRating 
-                  rating={media.avgRating || 0} 
-                  readonly={!showRating}
-                  onRate={onRate}
-                />
-                <span className="text-sm font-medium ml-1">{media.avgRating?.toFixed(1) || '0.0'}★</span>
+            <div className="flex flex-col space-y-2 mt-2">
+              {/* Mind Expanding Rating */}
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center text-purple-600">
+                  <Brain className="w-3 h-3 mr-1" />
+                  <StarRating 
+                    rating={media.avgMindExpanding || 0} 
+                    readonly={true}
+                    size="sm"
+                  />
+                  <span className="text-xs font-medium ml-1">{media.avgMindExpanding?.toFixed(1) || '0.0'}</span>
+                </div>
+                <Badge 
+                  variant="secondary" 
+                  className={`text-xs ${getMindExpandingColor(media.avgMindExpanding || 0)}`}
+                >
+                  {getMindExpandingLabel(media.avgMindExpanding || 0)}
+                </Badge>
               </div>
               
-              <Badge 
-                variant="secondary" 
-                className={`text-xs ${getRatingColor(media.avgRating || 0)}`}
-              >
-                {getRatingLabel(media.avgRating || 0)}
-              </Badge>
+              {/* Informative & Entertaining in one row */}
+              <div className="flex items-center space-x-4 text-xs">
+                <div className="flex items-center text-blue-600">
+                  <Info className="w-3 h-3 mr-1" />
+                  <StarRating 
+                    rating={media.avgInformative || 0} 
+                    readonly={true}
+                    size="sm"
+                  />
+                  <span className="font-medium ml-1">{media.avgInformative?.toFixed(1) || '0.0'}</span>
+                </div>
+                
+                <div className="flex items-center text-red-500">
+                  <Heart className="w-3 h-3 mr-1" />
+                  <StarRating 
+                    rating={media.avgEntertaining || 0} 
+                    readonly={true}
+                    size="sm"
+                  />
+                  <span className="font-medium ml-1">{media.avgEntertaining?.toFixed(1) || '0.0'}</span>
+                </div>
+              </div>
             </div>
             
             {media.description && (

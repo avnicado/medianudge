@@ -34,10 +34,12 @@ export class SimpleStorage implements ISimpleStorage {
       author: "Dave Thomas, Andy Hunt",
       description: "A guide to becoming a better programmer",
       imageUrl: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=600&fit=crop",
-      avgRating: 4.5,
+      externalId: null,
+      avgMindExpanding: 4.5,
+      avgInformative: 4.7,
+      avgEntertaining: 3.8,
       totalRatings: 120,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     },
     {
       id: 2,
@@ -46,10 +48,12 @@ export class SimpleStorage implements ISimpleStorage {
       author: "Robert C. Martin",
       description: "A handbook of agile software craftsmanship",
       imageUrl: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&h=600&fit=crop",
-      avgRating: 4.3,
+      externalId: null,
+      avgMindExpanding: 4.2,
+      avgInformative: 4.8,
+      avgEntertaining: 3.5,
       totalRatings: 89,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     },
     {
       id: 3,
@@ -58,10 +62,12 @@ export class SimpleStorage implements ISimpleStorage {
       author: "Andrew Ng",
       description: "Stanford's machine learning course",
       imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=600&fit=crop",
-      avgRating: 4.8,
+      externalId: null,
+      avgMindExpanding: 4.9,
+      avgInformative: 4.8,
+      avgEntertaining: 3.9,
       totalRatings: 1250,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     },
     {
       id: 4,
@@ -70,10 +76,12 @@ export class SimpleStorage implements ISimpleStorage {
       author: "Dan Carlin",
       description: "Hardcore History by Dan Carlin",
       imageUrl: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=400&h=600&fit=crop",
-      avgRating: 4.6,
+      externalId: null,
+      avgMindExpanding: 4.7,
+      avgInformative: 4.9,
+      avgEntertaining: 4.3,
       totalRatings: 567,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     },
     {
       id: 5,
@@ -82,10 +90,12 @@ export class SimpleStorage implements ISimpleStorage {
       author: "Christopher Nolan",
       description: "A thief who steals corporate secrets through dream-sharing technology",
       imageUrl: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=400&h=600&fit=crop",
-      avgRating: 4.4,
+      externalId: null,
+      avgMindExpanding: 4.8,
+      avgInformative: 3.2,
+      avgEntertaining: 4.7,
       totalRatings: 890,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     },
     {
       id: 6,
@@ -94,10 +104,12 @@ export class SimpleStorage implements ISimpleStorage {
       author: "Valve",
       description: "A puzzle-platform game with innovative mechanics",
       imageUrl: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=400&h=600&fit=crop",
-      avgRating: 4.7,
+      externalId: null,
+      avgMindExpanding: 4.6,
+      avgInformative: 3.8,
+      avgEntertaining: 4.9,
       totalRatings: 445,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     },
     {
       id: 7,
@@ -106,10 +118,12 @@ export class SimpleStorage implements ISimpleStorage {
       author: "Various",
       description: "Oxford-style debates on current affairs",
       imageUrl: "https://images.unsplash.com/photo-1559223607-b4d0555ae227?w=400&h=600&fit=crop",
-      avgRating: 4.3,
+      externalId: null,
+      avgMindExpanding: 4.5,
+      avgInformative: 4.7,
+      avgEntertaining: 3.9,
       totalRatings: 334,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     }
   ];
 
@@ -119,7 +133,7 @@ export class SimpleStorage implements ISimpleStorage {
     description: "Challenge yourself to read 5 high-quality articles this week from reputable sources",
     startDate: new Date("2024-01-01"),
     endDate: new Date("2024-01-07"),
-    isActive: true,
+    active: true,
     createdAt: new Date()
   };
 
@@ -130,6 +144,10 @@ export class SimpleStorage implements ISimpleStorage {
       firstName: "John",
       lastName: "Doe",
       profileImageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+      wisdomScore: 75,
+      criticScore: 4.2,
+      expertiseGoal: 7,
+      junkTolerance: 2,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -139,6 +157,10 @@ export class SimpleStorage implements ISimpleStorage {
       firstName: "Jane",
       lastName: "Smith",
       profileImageUrl: "https://images.unsplash.com/photo-1494790108755-2616b056d0e8?w=100&h=100&fit=crop&crop=face",
+      wisdomScore: 92,
+      criticScore: 4.8,
+      expertiseGoal: 8,
+      junkTolerance: 1,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -164,10 +186,11 @@ export class SimpleStorage implements ISimpleStorage {
     const newItem: MediaItem = {
       id: this.nextId++,
       ...item,
-      avgRating: 0,
+      avgMindExpanding: 3.0,
+      avgInformative: 3.0,
+      avgEntertaining: 3.0,
       totalRatings: 0,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     };
     
     this.mediaItems.push(newItem);
@@ -221,9 +244,9 @@ export class SimpleStorage implements ISimpleStorage {
   async createGuidingQuestion(questionData: InsertGuidingQuestion): Promise<GuidingQuestion> {
     const question: GuidingQuestion = {
       id: this.nextQuestionId++,
+      userId: questionData.userId,
       question: questionData.question,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     };
     
     this.guidingQuestions.push(question);

@@ -56,7 +56,10 @@ export const mediaItems = pgTable("media_items", {
   description: text("description"),
   imageUrl: text("image_url"),
   externalId: text("external_id"), // For API integration
-  avgRating: real("avg_rating").default(0),
+  // Three-dimensional ratings (1-5 scale)
+  avgMindExpanding: real("avg_mind_expanding").default(3.0),
+  avgInformative: real("avg_informative").default(3.0),
+  avgEntertaining: real("avg_entertaining").default(3.0),
   totalRatings: integer("total_ratings").default(0),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -65,7 +68,10 @@ export const userMediaRatings = pgTable("user_media_ratings", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id),
   mediaId: integer("media_id").notNull().references(() => mediaItems.id),
-  rating: integer("rating").notNull(), // 1-5 stars
+  // Three-dimensional ratings (1-5 scale each)
+  mindExpandingRating: integer("mind_expanding_rating").notNull(), // 1-5: junk food -> mind expanding
+  informativeRating: integer("informative_rating").notNull(), // 1-5: uninformative -> informative  
+  entertainingRating: integer("entertaining_rating").notNull(), // 1-5: boring -> entertaining
   review: text("review"),
   dateConsumed: timestamp("date_consumed"),
   createdAt: timestamp("created_at").defaultNow(),
