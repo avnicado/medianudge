@@ -160,7 +160,6 @@ export default function Home() {
                 ))}
               </div>
               <Button variant="ghost" className="w-full mt-6 text-primary hover:bg-gradient-to-r hover:from-primary hover:to-secondary hover:text-white transition-all font-semibold" onClick={() => {
-                console.log('Navigating to category: book');
                 window.location.href = '/category?type=book';
               }}>
                 View All Books
