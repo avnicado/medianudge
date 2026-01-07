@@ -108,52 +108,58 @@ export default function Home() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30">
         <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <div className="gradient-primary rounded-xl p-8 text-white mb-6">
-            <h2 className="text-2xl font-bold mb-2">Welcome to MediaNudge!</h2>
-            <p className="text-blue-100 mb-4">Discover quality content that cultivates education, wisdom, and meaningful engagement. Browse curated recommendations across books, courses, podcasts, movies, games, and debates.</p>
-            <div className="flex items-center space-x-6 text-sm">
-              <div className="flex items-center space-x-2">
-                <Trophy className="w-4 h-4 text-yellow-300" />
-                <span>Wisdom Level: {wisdomLevel}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Star className="w-4 h-4 text-yellow-300" />
-                <span>Quality First Platform</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Target className="w-4 h-4 text-green-300" />
-                <span>Growth Over Entertainment</span>
+        <div className="mb-12">
+          <div className="gradient-primary rounded-2xl p-10 text-white mb-8 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="relative z-10">
+              <h2 className="text-4xl font-bold mb-3 tracking-tight">Welcome to MediaNudge!</h2>
+              <p className="text-blue-100 mb-6 text-lg leading-relaxed max-w-3xl">Discover quality content that cultivates education, wisdom, and meaningful engagement. Browse curated recommendations across books, courses, podcasts, movies, games, and debates.</p>
+              <div className="flex flex-wrap items-center gap-6 text-sm">
+                <div className="flex items-center space-x-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+                  <Trophy className="w-5 h-5 text-yellow-300" />
+                  <span className="font-semibold">Wisdom Level: {wisdomLevel}</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+                  <Star className="w-5 h-5 text-yellow-300" />
+                  <span className="font-semibold">Quality First Platform</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+                  <Target className="w-5 h-5 text-green-300" />
+                  <span className="font-semibold">Growth Over Entertainment</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Recommendation Categories - Row 1 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-8">
           {/* Books */}
-          <Card>
-            <CardHeader>
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
+            <CardHeader className="bg-gradient-to-br from-blue-50 to-purple-50 border-b-2 border-slate-100">
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center">
-                  <BookOpen className="w-5 h-5 text-primary mr-2" />
+                <CardTitle className="flex items-center text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 shadow-md">
+                    <BookOpen className="w-5 h-5 text-white" />
+                  </div>
                   Books
                 </CardTitle>
-                <span className="text-sm text-slate-500">Based on your interests</span>
+                <span className="text-sm text-slate-600 font-medium">Based on your interests</span>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="space-y-4">
                 {booksRecommendations?.slice(0, 2).map((book: any) => (
                   <MediaCard key={book.id} media={book} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => {
+              <Button variant="ghost" className="w-full mt-6 text-primary hover:bg-gradient-to-r hover:from-primary hover:to-secondary hover:text-white transition-all font-semibold" onClick={() => {
                 console.log('Navigating to category: book');
                 window.location.href = '/category?type=book';
               }}>
@@ -163,46 +169,50 @@ export default function Home() {
           </Card>
 
           {/* Courses */}
-          <Card>
-            <CardHeader>
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
+            <CardHeader className="bg-gradient-to-br from-green-50 to-blue-50 border-b-2 border-slate-100">
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center">
-                  <GraduationCap className="w-5 h-5 text-primary mr-2" />
+                <CardTitle className="flex items-center text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 shadow-md">
+                    <GraduationCap className="w-5 h-5 text-white" />
+                  </div>
                   Courses
                 </CardTitle>
-                <span className="text-sm text-slate-500">Skill building</span>
+                <span className="text-sm text-slate-600 font-medium">Skill building</span>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="space-y-4">
                 {coursesRecommendations?.slice(0, 2).map((course: any) => (
                   <MediaCard key={course.id} media={course} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=course'}>
+              <Button variant="ghost" className="w-full mt-6 text-primary hover:bg-gradient-to-r hover:from-primary hover:to-secondary hover:text-white transition-all font-semibold" onClick={() => window.location.href = '/category?type=course'}>
                 View All Courses
               </Button>
             </CardContent>
           </Card>
 
           {/* Podcasts */}
-          <Card>
-            <CardHeader>
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
+            <CardHeader className="bg-gradient-to-br from-purple-50 to-pink-50 border-b-2 border-slate-100">
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center">
-                  <Headphones className="w-5 h-5 text-primary mr-2" />
+                <CardTitle className="flex items-center text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 shadow-md">
+                    <Headphones className="w-5 h-5 text-white" />
+                  </div>
                   Podcasts
                 </CardTitle>
-                <span className="text-sm text-slate-500">Curated episodes</span>
+                <span className="text-sm text-slate-600 font-medium">Curated episodes</span>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="space-y-4">
                 {podcastsRecommendations?.slice(0, 2).map((podcast: any) => (
                   <MediaCard key={podcast.id} media={podcast} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=podcast'}>
+              <Button variant="ghost" className="w-full mt-6 text-primary hover:bg-gradient-to-r hover:from-primary hover:to-secondary hover:text-white transition-all font-semibold" onClick={() => window.location.href = '/category?type=podcast'}>
                 View All Podcasts
               </Button>
             </CardContent>
@@ -210,71 +220,77 @@ export default function Home() {
         </div>
 
         {/* Recommendation Categories - Row 2 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
           {/* Movies */}
-          <Card>
-            <CardHeader>
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
+            <CardHeader className="bg-gradient-to-br from-red-50 to-orange-50 border-b-2 border-slate-100">
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center">
-                  <Film className="w-5 h-5 text-primary mr-2" />
+                <CardTitle className="flex items-center text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 shadow-md">
+                    <Film className="w-5 h-5 text-white" />
+                  </div>
                   Movies
                 </CardTitle>
-                <span className="text-sm text-slate-500">Thought-provoking films</span>
+                <span className="text-sm text-slate-600 font-medium">Thought-provoking films</span>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="space-y-4">
                 {moviesRecommendations?.slice(0, 2).map((movie: any) => (
                   <MediaCard key={movie.id} media={movie} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=movie'}>
+              <Button variant="ghost" className="w-full mt-6 text-primary hover:bg-gradient-to-r hover:from-primary hover:to-secondary hover:text-white transition-all font-semibold" onClick={() => window.location.href = '/category?type=movie'}>
                 View All Movies
               </Button>
             </CardContent>
           </Card>
 
           {/* Games */}
-          <Card>
-            <CardHeader>
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
+            <CardHeader className="bg-gradient-to-br from-yellow-50 to-green-50 border-b-2 border-slate-100">
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center">
-                  <Gamepad2 className="w-5 h-5 text-primary mr-2" />
+                <CardTitle className="flex items-center text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 shadow-md">
+                    <Gamepad2 className="w-5 h-5 text-white" />
+                  </div>
                   Games
                 </CardTitle>
-                <span className="text-sm text-slate-500">Engaging experiences</span>
+                <span className="text-sm text-slate-600 font-medium">Engaging experiences</span>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="space-y-4">
                 {gamesRecommendations?.slice(0, 2).map((game: any) => (
                   <MediaCard key={game.id} media={game} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=game'}>
+              <Button variant="ghost" className="w-full mt-6 text-primary hover:bg-gradient-to-r hover:from-primary hover:to-secondary hover:text-white transition-all font-semibold" onClick={() => window.location.href = '/category?type=game'}>
                 View All Games
               </Button>
             </CardContent>
           </Card>
 
           {/* Debates */}
-          <Card>
-            <CardHeader>
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
+            <CardHeader className="bg-gradient-to-br from-indigo-50 to-purple-50 border-b-2 border-slate-100">
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center">
-                  <Users className="w-5 h-5 text-primary mr-2" />
+                <CardTitle className="flex items-center text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 shadow-md">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
                   Debates
                 </CardTitle>
-                <span className="text-sm text-slate-500">Critical thinking</span>
+                <span className="text-sm text-slate-600 font-medium">Critical thinking</span>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="space-y-4">
                 {debatesRecommendations?.slice(0, 2).map((debate: any) => (
                   <MediaCard key={debate.id} media={debate} />
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" onClick={() => window.location.href = '/category?type=debate'}>
+              <Button variant="ghost" className="w-full mt-6 text-primary hover:bg-gradient-to-r hover:from-primary hover:to-secondary hover:text-white transition-all font-semibold" onClick={() => window.location.href = '/category?type=debate'}>
                 View All Debates
               </Button>
             </CardContent>
@@ -282,16 +298,18 @@ export default function Home() {
         </div>
 
         {/* Recent Activity & Weekly Challenge */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Recent Activity */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <History className="w-5 h-5 text-primary mr-2" />
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="bg-gradient-to-br from-slate-50 to-blue-50 border-b-2 border-slate-100">
+              <CardTitle className="flex items-center text-xl">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 shadow-md">
+                  <History className="w-5 h-5 text-white" />
+                </div>
                 Your Recent Activity
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="space-y-4">
                 {userRatings?.slice(0, 3).map((rating: any) => (
                   <div key={rating.id} className="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">

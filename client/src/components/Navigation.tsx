@@ -24,27 +24,27 @@ export default function Navigation() {
   ];
 
   return (
-    <header className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+    <header className="bg-white/90 backdrop-blur-md shadow-lg border-b border-slate-200/50 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-4">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 gradient-primary rounded-lg flex items-center justify-center">
-                <Brain className="w-6 h-6 text-white" />
+            <Link href="/" className="flex items-center space-x-3 group">
+              <div className="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                <Brain className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-slate-900">MediaNudge</h1>
-                <p className="text-xs text-slate-500">Cultivate Wisdom</p>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">MediaNudge</h1>
+                <p className="text-xs text-slate-500 font-medium">Cultivate Wisdom</p>
               </div>
             </Link>
           </div>
           
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className={`transition-colors font-medium ${
+              <Link key={link.href} href={link.href} className={`px-4 py-2 rounded-lg transition-all duration-200 font-semibold ${
                 link.active 
-                  ? 'text-primary' 
-                  : 'text-slate-700 hover:text-primary'
+                  ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-md' 
+                  : 'text-slate-700 hover:bg-slate-100 hover:text-primary'
               }`}>
                 {link.label}
               </Link>
@@ -56,36 +56,36 @@ export default function Navigation() {
               <Input 
                 type="search" 
                 placeholder="Search media..." 
-                className="w-64 pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-64 pl-10 pr-4 py-2 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-slate-50 hover:bg-white"
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Avatar className="w-10 h-10">
+            <div className="flex items-center space-x-3 bg-slate-50 rounded-xl px-3 py-2 hover:bg-slate-100 transition-all">
+              <Avatar className="w-10 h-10 ring-2 ring-primary/20 ring-offset-2">
                 <AvatarImage 
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" 
                   alt="User profile" 
                 />
-                <AvatarFallback>
+                <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white font-bold">
                   EX
                 </AvatarFallback>
               </Avatar>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-sm">
+                  <Button variant="ghost" className="text-sm hover:bg-transparent p-0">
                     <div className="text-left">
-                      <div className="font-medium text-slate-900">
+                      <div className="font-semibold text-slate-900">
                         Demo User
                       </div>
-                      <div className="text-xs text-purple-600">
+                      <div className="text-xs font-medium bg-gradient-to-r from-wisdom to-secondary bg-clip-text text-transparent">
                         Wisdom: {wisdomLevel}
                       </div>
                     </div>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem>
                     <Link href="/profile">
                       <a className="w-full">My Profile</a>
