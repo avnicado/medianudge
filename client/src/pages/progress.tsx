@@ -623,7 +623,7 @@ export default function Progress() {
                 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button className="w-full bg-primary text-white hover:bg-primary/90" disabled>
+                    <Button className="w-full bg-primary text-white" disabled>
                       Find Challenge Content
                     </Button>
                   </TooltipTrigger>

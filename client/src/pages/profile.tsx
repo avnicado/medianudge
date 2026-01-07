@@ -215,7 +215,7 @@ export default function Profile() {
                     {!isOwnProfile && (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button className="bg-primary text-white hover:bg-primary/90" disabled>
+                          <Button className="bg-primary text-white" disabled>
                             <UserPlus className="w-4 h-4 mr-2" />
                             Follow
                           </Button>
@@ -441,7 +441,7 @@ export default function Profile() {
                           {isOwnProfile && (
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" disabled>
+                                <Button variant="ghost" size="sm" className="text-primary" disabled>
                                   <Edit className="w-4 h-4" />
                                 </Button>
                               </TooltipTrigger>

@@ -565,7 +565,7 @@ export default function Admin() {
                 <div className="mt-6 flex space-x-3">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button className="bg-green-600 hover:bg-green-700 text-white" disabled>
+                      <Button className="bg-green-600 text-white" disabled>
                         Save Goal Settings
                       </Button>
                     </TooltipTrigger>

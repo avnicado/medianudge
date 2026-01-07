@@ -181,7 +181,7 @@ export default function Social() {
                               <div className="flex items-center space-x-4 text-sm text-slate-500">
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <button className="flex items-center space-x-1 hover:text-primary" disabled>
+                                    <button className="flex items-center space-x-1" disabled>
                                       <MessageCircle className="w-4 h-4" />
                                       <span>Comment</span>
                                     </button>
@@ -192,7 +192,7 @@ export default function Social() {
                                 </Tooltip>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <button className="flex items-center space-x-1 hover:text-primary" disabled>
+                                    <button className="flex items-center space-x-1" disabled>
                                       <Trophy className="w-4 h-4" />
                                       <span>Appreciate</span>
                                     </button>
@@ -398,7 +398,7 @@ export default function Social() {
                       </div>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" disabled>
+                          <Button variant="ghost" size="sm" className="text-primary" disabled>
                             <UserPlus className="w-4 h-4" />
                           </Button>
                         </TooltipTrigger>
@@ -414,7 +414,7 @@ export default function Social() {
                 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" className="w-full text-primary hover:bg-primary/5" disabled>
+                    <Button variant="ghost" className="w-full text-primary" disabled>
                       View Leaderboard
                     </Button>
                   </TooltipTrigger>
@@ -463,7 +463,7 @@ export default function Social() {
                 <div className="space-y-2">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" className="w-full justify-start text-primary hover:bg-primary/5" disabled>
+                      <Button variant="ghost" className="w-full justify-start text-primary" disabled>
                         View All Followers
                       </Button>
                     </TooltipTrigger>
@@ -473,7 +473,7 @@ export default function Social() {
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" className="w-full justify-start text-primary hover:bg-primary/5" disabled>
+                      <Button variant="ghost" className="w-full justify-start text-primary" disabled>
                         View All Following
                       </Button>
                     </TooltipTrigger>
@@ -483,7 +483,7 @@ export default function Social() {
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" className="w-full justify-start text-primary hover:bg-primary/5" disabled>
+                      <Button variant="ghost" className="w-full justify-start text-primary" disabled>
                         Discover New Users
                       </Button>
                     </TooltipTrigger>
@@ -528,7 +528,7 @@ export default function Social() {
                 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button className="w-full bg-primary text-white hover:bg-primary/90" disabled>
+                    <Button className="w-full bg-primary text-white" disabled>
                       Create New Content
                     </Button>
                   </TooltipTrigger>

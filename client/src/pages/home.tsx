@@ -308,7 +308,7 @@ export default function Home() {
                     </div>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" disabled>
+                        <Button variant="ghost" size="sm" className="text-primary" disabled>
                           <Edit className="w-4 h-4" />
                         </Button>
                       </TooltipTrigger>
@@ -321,7 +321,7 @@ export default function Home() {
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" disabled>
+                  <Button variant="ghost" className="w-full mt-4 text-primary" disabled>
                     View Full History
                   </Button>
                 </TooltipTrigger>
@@ -363,7 +363,7 @@ export default function Home() {
               
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button className="w-full bg-primary text-white hover:bg-primary/90" disabled>
+                  <Button className="w-full bg-primary text-white" disabled>
                     Find Challenge Content
                   </Button>
                 </TooltipTrigger>
@@ -429,7 +429,7 @@ export default function Home() {
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium text-sm" disabled>
+                  <Button variant="ghost" className="text-primary font-medium text-sm" disabled>
                     View Leaderboard
                   </Button>
                 </TooltipTrigger>
@@ -476,7 +476,7 @@ export default function Home() {
             <div className="flex items-center justify-between">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button className="bg-primary text-white hover:bg-primary/90 font-medium" disabled>
+                  <Button className="bg-primary text-white font-medium" disabled>
                     <Plus className="w-4 h-4 mr-2" />
                     Create Content
                   </Button>
