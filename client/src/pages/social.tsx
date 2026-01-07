@@ -69,16 +69,16 @@ export default function Social() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30">
         <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-10">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">Social</h1>
-              <p className="text-slate-600 mt-1">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">Social</h1>
+              <p className="text-slate-600 text-lg">
                 Connect with fellow learners and discover what's inspiring the community
               </p>
             </div>
@@ -86,10 +86,10 @@ export default function Social() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                     <Input 
                       placeholder="Search users or content..."
-                      className="pl-10 w-80"
+                      className="pl-10 w-80 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/50"
                       disabled
                     />
                   </div>
@@ -100,7 +100,7 @@ export default function Social() {
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline" disabled>
+                  <Button variant="outline" disabled className="border-2 rounded-xl">
                     <Filter className="w-4 h-4 mr-2" />
                     Filter
                   </Button>
@@ -115,16 +115,18 @@ export default function Social() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* Activity Feed */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Zap className="w-5 h-5 text-primary mr-2" />
+            <Card className="border-2 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="bg-gradient-to-br from-slate-50 to-blue-50 border-b-2 border-slate-100">
+                <CardTitle className="flex items-center text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 shadow-md">
+                    <Zap className="w-5 h-5 text-white" />
+                  </div>
                   Recent Activity
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-6">
                   {recentActivity?.length > 0 ? (
                     recentActivity.map((activity: any) => (
@@ -219,14 +221,16 @@ export default function Social() {
             </Card>
 
             {/* Community Highlights */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <TrendingUp className="w-5 h-5 text-primary mr-2" />
+            <Card className="border-2 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="bg-gradient-to-br from-slate-50 to-purple-50 border-b-2 border-slate-100">
+                <CardTitle className="flex items-center text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mr-3 shadow-md">
+                    <TrendingUp className="w-5 h-5 text-white" />
+                  </div>
                   Community Highlights
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <Tabs defaultValue="trending" className="w-full">
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="trending">Trending</TabsTrigger>
@@ -363,16 +367,18 @@ export default function Social() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Top Contributors */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Award className="w-5 h-5 text-primary mr-2" />
+            <Card className="border-2 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="bg-gradient-to-br from-yellow-50 to-orange-50 border-b-2 border-slate-100">
+                <CardTitle className="flex items-center text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center mr-3 shadow-md">
+                    <Award className="w-5 h-5 text-white" />
+                  </div>
                   Top Contributors
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-4">
                   {topUsers?.slice(0, 5).map((user: any, index: number) => (
                     <div key={user.id} className="flex items-center space-x-3">
