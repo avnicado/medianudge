@@ -1,4 +1,4 @@
-import { MediaItem, InsertMediaItem, WeeklyChallenge, User, GuidingQuestion, InsertGuidingQuestion } from "@shared/schema";
+import { MediaItem, InsertMediaItem, WeeklyChallenge, InsertWeeklyChallenge, User, GuidingQuestion, InsertGuidingQuestion } from "@shared/schema";
 
 // Simple in-memory storage for standalone mode
 export interface ISimpleStorage {
@@ -11,6 +11,10 @@ export interface ISimpleStorage {
   
   // Weekly challenges
   getActiveWeeklyChallenge(): Promise<WeeklyChallenge | undefined>;
+  getAllWeeklyChallenges(): Promise<WeeklyChallenge[]>;
+  createWeeklyChallenge(challenge: InsertWeeklyChallenge): Promise<WeeklyChallenge>;
+  updateWeeklyChallenge(id: number, challenge: Partial<InsertWeeklyChallenge>): Promise<WeeklyChallenge>;
+  deleteWeeklyChallenge(id: number): Promise<void>;
   
   // Recommendations
   getRecommendations(type?: string): Promise<MediaItem[]>;
@@ -20,11 +24,42 @@ export interface ISimpleStorage {
   getGuidingQuestions(): Promise<GuidingQuestion[]>;
   createGuidingQuestion(question: InsertGuidingQuestion): Promise<GuidingQuestion>;
   deleteGuidingQuestion(id: number): Promise<void>;
+  
+  // Goal and progress management
+  getGoalProgress(): Promise<any>;
+  updateGoalProgress(data: any): Promise<any>;
 }
 
 export class SimpleStorage implements ISimpleStorage {
   private guidingQuestions: GuidingQuestion[] = [];
   private nextQuestionId = 1;
+  
+  private weeklyChallenges: WeeklyChallenge[] = [
+    {
+      id: 1,
+      title: "Read 5 High-Quality Articles",
+      description: "Challenge yourself to read 5 high-quality articles this week from reputable sources",
+      startDate: new Date("2024-01-01"),
+      endDate: new Date("2024-01-07"),
+      requirements: { target: 5, type: "articles" },
+      active: true,
+      createdAt: new Date()
+    }
+  ];
+  private nextChallengeId = 2;
+  
+  private goalProgress = {
+    booksCompleted: 8,
+    booksTarget: 24,
+    coursesCompleted: 2,
+    coursesTarget: 6,
+    podcastsCompleted: 5,
+    podcastsTarget: 12,
+    debatesCompleted: 1,
+    debatesTarget: 4,
+    wisdomScore: 450,
+    criticScore: 4.2,
+  };
   
   private mediaItems: MediaItem[] = [
     {
@@ -127,15 +162,7 @@ export class SimpleStorage implements ISimpleStorage {
     }
   ];
 
-  private weeklyChallenge: WeeklyChallenge = {
-    id: 1,
-    title: "Read 5 High-Quality Articles",
-    description: "Challenge yourself to read 5 high-quality articles this week from reputable sources",
-    startDate: new Date("2024-01-01"),
-    endDate: new Date("2024-01-07"),
-    active: true,
-    createdAt: new Date()
-  };
+  private nextId = 8;
 
   private sampleUsers: User[] = [
     {
@@ -217,7 +244,53 @@ export class SimpleStorage implements ISimpleStorage {
   }
 
   async getActiveWeeklyChallenge(): Promise<WeeklyChallenge | undefined> {
-    return this.weeklyChallenge;
+    return this.weeklyChallenges.find(c => c.active);
+  }
+
+  async getAllWeeklyChallenges(): Promise<WeeklyChallenge[]> {
+    return this.weeklyChallenges;
+  }
+
+  async createWeeklyChallenge(challengeData: InsertWeeklyChallenge): Promise<WeeklyChallenge> {
+    // If the new challenge is active, deactivate all other challenges
+    if (challengeData.active) {
+      this.weeklyChallenges.forEach(c => c.active = false);
+    }
+
+    const challenge: WeeklyChallenge = {
+      id: this.nextChallengeId++,
+      ...challengeData,
+      createdAt: new Date()
+    };
+    
+    this.weeklyChallenges.push(challenge);
+    return challenge;
+  }
+
+  async updateWeeklyChallenge(id: number, challengeData: Partial<InsertWeeklyChallenge>): Promise<WeeklyChallenge> {
+    const index = this.weeklyChallenges.findIndex(c => c.id === id);
+    if (index === -1) {
+      throw new Error('Weekly challenge not found');
+    }
+
+    // If setting this challenge to active, deactivate all others
+    if (challengeData.active) {
+      this.weeklyChallenges.forEach(c => c.active = false);
+    }
+
+    this.weeklyChallenges[index] = {
+      ...this.weeklyChallenges[index],
+      ...challengeData
+    };
+
+    return this.weeklyChallenges[index];
+  }
+
+  async deleteWeeklyChallenge(id: number): Promise<void> {
+    const index = this.weeklyChallenges.findIndex(c => c.id === id);
+    if (index !== -1) {
+      this.weeklyChallenges.splice(index, 1);
+    }
   }
 
   async getRecommendations(type?: string): Promise<MediaItem[]> {
@@ -258,6 +331,15 @@ export class SimpleStorage implements ISimpleStorage {
     if (index !== -1) {
       this.guidingQuestions.splice(index, 1);
     }
+  }
+
+  async getGoalProgress(): Promise<any> {
+    return this.goalProgress;
+  }
+
+  async updateGoalProgress(data: any): Promise<any> {
+    this.goalProgress = { ...this.goalProgress, ...data };
+    return this.goalProgress;
   }
 }
 

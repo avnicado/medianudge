@@ -54,18 +54,24 @@ export default function Progress() {
   const queryClient = useQueryClient();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  // No authentication required - show dummy progress data
+  // Fetch goal progress data
+  const { data: goalProgressData } = useQuery({
+    queryKey: ["/api/goal-progress"],
+    enabled: true,
+  });
+
+  // Use fetched data or fall back to hardcoded demo data
   const yearlyGoal = {
     id: 1,
     year: selectedYear,
-    booksTarget: 24,
-    booksCompleted: 8,
-    coursesTarget: 6,
-    coursesCompleted: 2,
-    podcastsTarget: 12,
-    podcastsCompleted: 5,
-    debatesTarget: 4,
-    debatesCompleted: 1,
+    booksTarget: goalProgressData?.booksTarget || 24,
+    booksCompleted: goalProgressData?.booksCompleted || 8,
+    coursesTarget: goalProgressData?.coursesTarget || 6,
+    coursesCompleted: goalProgressData?.coursesCompleted || 2,
+    podcastsTarget: goalProgressData?.podcastsTarget || 12,
+    podcastsCompleted: goalProgressData?.podcastsCompleted || 5,
+    debatesTarget: goalProgressData?.debatesTarget || 4,
+    debatesCompleted: goalProgressData?.debatesCompleted || 1,
     userId: "demo-user"
   };
 
@@ -202,6 +208,9 @@ export default function Progress() {
 
   // No authentication required - show content to all users
 
+  const wisdomScore = goalProgressData?.wisdomScore || 450;
+  const criticScore = goalProgressData?.criticScore || 4.2;
+
   const getWisdomLevel = (score: number) => {
     if (score >= 800) return "PhD Level";
     if (score >= 600) return "Master's Level";
@@ -305,10 +314,10 @@ export default function Progress() {
                 <div>
                   <p className="text-sm font-semibold text-slate-600 mb-1">Wisdom Score</p>
                   <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
-                    {getWisdomLevel(450)}
+                    {getWisdomLevel(wisdomScore)}
                   </p>
                   <p className="text-sm text-slate-500 font-medium mt-1">
-                    {getWisdomPercentile(450)} percentile
+                    {getWisdomPercentile(wisdomScore)} percentile
                   </p>
                 </div>
                 <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -324,7 +333,7 @@ export default function Progress() {
                 <div>
                   <p className="text-sm font-semibold text-slate-600 mb-1">Critic Score</p>
                   <p className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-400 bg-clip-text text-transparent">
-                    4.2/5
+                    {criticScore.toFixed(1)}/5
                   </p>
                   <p className="text-sm text-slate-500 font-medium mt-1">Review quality</p>
                 </div>

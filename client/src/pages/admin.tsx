@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Trash2, Edit, Eye, Target, Brain, Info, Heart } from "lucide-react";
+import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Trash2, Edit, Eye, Target, Brain, Info, Heart, Trophy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -36,8 +36,18 @@ const guidingQuestionSchema = z.object({
   question: z.string().min(5, "Question must be at least 5 characters").max(500, "Question too long"),
 });
 
+const weeklyChallengeSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  startDate: z.date(),
+  endDate: z.date(),
+  requirements: z.any().default({}),
+  active: z.boolean().default(false),
+});
+
 type MediaItemFormData = z.infer<typeof mediaItemSchema>;
 type GuidingQuestionFormData = z.infer<typeof guidingQuestionSchema>;
+type WeeklyChallengeFormData = z.infer<typeof weeklyChallengeSchema>;
 
 const mediaTypeOptions = [
   { value: "book", label: "Book", icon: BookOpen },
@@ -51,6 +61,8 @@ const mediaTypeOptions = [
 export default function Admin() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isQuestionDialogOpen, setIsQuestionDialogOpen] = useState(false);
+  const [isChallengeDialogOpen, setIsChallengeDialogOpen] = useState(false);
+  const [editingChallenge, setEditingChallenge] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -75,6 +87,18 @@ export default function Admin() {
     },
   });
 
+  const challengeForm = useForm<WeeklyChallengeFormData>({
+    resolver: zodResolver(weeklyChallengeSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      requirements: {},
+      active: false,
+    },
+  });
+
   // Fetch all media items
   const { data: mediaItems, isLoading } = useQuery({
     queryKey: ["/api/media"],
@@ -94,6 +118,30 @@ export default function Admin() {
       const response = await fetch("/api/guiding-questions");
       if (!response.ok) {
         throw new Error("Failed to fetch guiding questions");
+      }
+      return response.json();
+    },
+  });
+
+  // Fetch weekly challenges
+  const { data: weeklyChallenges, isLoading: isLoadingChallenges } = useQuery({
+    queryKey: ["/api/weekly-challenges"],
+    queryFn: async () => {
+      const response = await fetch("/api/weekly-challenges");
+      if (!response.ok) {
+        throw new Error("Failed to fetch weekly challenges");
+      }
+      return response.json();
+    },
+  });
+
+  // Fetch goal progress
+  const { data: goalProgress, isLoading: isLoadingGoals } = useQuery({
+    queryKey: ["/api/goal-progress"],
+    queryFn: async () => {
+      const response = await fetch("/api/goal-progress");
+      if (!response.ok) {
+        throw new Error("Failed to fetch goal progress");
       }
       return response.json();
     },
@@ -191,6 +239,95 @@ export default function Admin() {
     },
   });
 
+  const createChallengeMutation = useMutation({
+    mutationFn: async (data: WeeklyChallengeFormData) => {
+      await apiRequest("POST", "/api/weekly-challenges", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-challenges"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-challenge"] });
+      challengeForm.reset();
+      setIsChallengeDialogOpen(false);
+      setEditingChallenge(null);
+      toast({
+        title: "Success",
+        description: "Weekly challenge created successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to create weekly challenge",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateChallengeMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: Partial<WeeklyChallengeFormData> }) => {
+      await apiRequest("PUT", `/api/weekly-challenges/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-challenges"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-challenge"] });
+      challengeForm.reset();
+      setIsChallengeDialogOpen(false);
+      setEditingChallenge(null);
+      toast({
+        title: "Success",
+        description: "Weekly challenge updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update weekly challenge",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteChallengeMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/weekly-challenges/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-challenges"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/weekly-challenge"] });
+      toast({
+        title: "Success",
+        description: "Weekly challenge deleted successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete weekly challenge",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateGoalProgressMutation = useMutation({
+    mutationFn: async (data: any) => {
+      await apiRequest("PUT", "/api/goal-progress", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/goal-progress"] });
+      toast({
+        title: "Success",
+        description: "Goal progress updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update goal progress",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this media item?")) {
       await deleteMediaItemMutation.mutateAsync(id);
@@ -210,6 +347,62 @@ export default function Admin() {
     await addQuestionMutation.mutateAsync(data);
   };
 
+  const onSubmitChallenge = async (data: WeeklyChallengeFormData) => {
+    if (editingChallenge) {
+      await updateChallengeMutation.mutateAsync({ id: editingChallenge.id, data });
+    } else {
+      await createChallengeMutation.mutateAsync(data);
+    }
+  };
+
+  const handleEditChallenge = (challenge: any) => {
+    setEditingChallenge(challenge);
+    challengeForm.reset({
+      title: challenge.title,
+      description: challenge.description,
+      startDate: new Date(challenge.startDate),
+      endDate: new Date(challenge.endDate),
+      requirements: challenge.requirements || {},
+      active: challenge.active || false,
+    });
+    setIsChallengeDialogOpen(true);
+  };
+
+  const handleDeleteChallenge = async (id: number) => {
+    if (window.confirm("Are you sure you want to delete this weekly challenge?")) {
+      await deleteChallengeMutation.mutateAsync(id);
+    }
+  };
+
+  const handleSaveGoalProgress = async () => {
+    const booksCompleted = parseInt((document.getElementById('books-completed') as HTMLInputElement)?.value || '0');
+    const coursesCompleted = parseInt((document.getElementById('courses-completed') as HTMLInputElement)?.value || '0');
+    const podcastsCompleted = parseInt((document.getElementById('podcasts-completed') as HTMLInputElement)?.value || '0');
+    const debatesCompleted = parseInt((document.getElementById('debates-completed') as HTMLInputElement)?.value || '0');
+    const wisdomScore = parseInt((document.getElementById('wisdom-score') as HTMLInputElement)?.value || '0');
+    const criticScore = parseFloat((document.getElementById('critic-score') as HTMLInputElement)?.value || '0');
+
+    await updateGoalProgressMutation.mutateAsync({
+      booksCompleted,
+      coursesCompleted,
+      podcastsCompleted,
+      debatesCompleted,
+      wisdomScore,
+      criticScore,
+    });
+  };
+
+  const handleResetGoalProgress = () => {
+    if (goalProgress) {
+      (document.getElementById('books-completed') as HTMLInputElement).value = String(goalProgress.booksCompleted || 8);
+      (document.getElementById('courses-completed') as HTMLInputElement).value = String(goalProgress.coursesCompleted || 2);
+      (document.getElementById('podcasts-completed') as HTMLInputElement).value = String(goalProgress.podcastsCompleted || 5);
+      (document.getElementById('debates-completed') as HTMLInputElement).value = String(goalProgress.debatesCompleted || 1);
+      (document.getElementById('wisdom-score') as HTMLInputElement).value = String(goalProgress.wisdomScore || 450);
+      (document.getElementById('critic-score') as HTMLInputElement).value = String(goalProgress.criticScore || 4.2);
+    }
+  };
+
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-slate-50">
@@ -220,8 +413,9 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="media" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="media">Media Items</TabsTrigger>
+            <TabsTrigger value="challenges">Weekly Challenges</TabsTrigger>
             <TabsTrigger value="goals">Goal Settings</TabsTrigger>
             <TabsTrigger value="questions">Guiding Questions</TabsTrigger>
           </TabsList>
@@ -474,6 +668,185 @@ export default function Admin() {
             </div>
           </TabsContent>
 
+          <TabsContent value="challenges" className="mt-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center">
+                    <Trophy className="w-5 h-5 text-primary mr-2" />
+                    Weekly Challenges Management
+                  </CardTitle>
+                  <Dialog open={isChallengeDialogOpen} onOpenChange={(open) => {
+                    setIsChallengeDialogOpen(open);
+                    if (!open) {
+                      setEditingChallenge(null);
+                      challengeForm.reset();
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Challenge
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>{editingChallenge ? 'Edit' : 'Add'} Weekly Challenge</DialogTitle>
+                      </DialogHeader>
+                      <Form {...challengeForm}>
+                        <form onSubmit={challengeForm.handleSubmit(onSubmitChallenge)} className="space-y-4">
+                          <FormField
+                            control={challengeForm.control}
+                            name="title"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Title</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="e.g., Read 5 High-Quality Articles" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={challengeForm.control}
+                            name="description"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                  <Textarea 
+                                    placeholder="Describe the challenge and its goals..."
+                                    className="min-h-[80px]"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                              control={challengeForm.control}
+                              name="startDate"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Start Date</FormLabel>
+                                  <FormControl>
+                                    <Input 
+                                      type="date" 
+                                      value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : ''}
+                                      onChange={(e) => field.onChange(new Date(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={challengeForm.control}
+                              name="endDate"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>End Date</FormLabel>
+                                  <FormControl>
+                                    <Input 
+                                      type="date"
+                                      value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : ''}
+                                      onChange={(e) => field.onChange(new Date(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <FormField
+                            control={challengeForm.control}
+                            name="active"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl>
+                                  <input 
+                                    type="checkbox" 
+                                    checked={field.value}
+                                    onChange={field.onChange}
+                                    className="w-4 h-4"
+                                  />
+                                </FormControl>
+                                <FormLabel className="!mt-0">Set as Active Challenge</FormLabel>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Button 
+                            type="submit" 
+                            className="w-full"
+                            disabled={createChallengeMutation.isPending || updateChallengeMutation.isPending}
+                          >
+                            {(createChallengeMutation.isPending || updateChallengeMutation.isPending) 
+                              ? "Saving..." 
+                              : editingChallenge ? "Update Challenge" : "Create Challenge"}
+                          </Button>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {isLoadingChallenges ? (
+                    <div className="text-center py-8">Loading challenges...</div>
+                  ) : (
+                    <>
+                      {weeklyChallenges?.map((challenge: any) => (
+                        <div key={challenge.id} className="flex items-start justify-between p-4 bg-slate-50 rounded-lg border-2 border-slate-200">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <h3 className="font-semibold text-slate-900">{challenge.title}</h3>
+                              {challenge.active && <Badge className="bg-green-500">Active</Badge>}
+                            </div>
+                            <p className="text-sm text-slate-600 mb-2">{challenge.description}</p>
+                            <div className="text-xs text-slate-500">
+                              {new Date(challenge.startDate).toLocaleDateString()} - {new Date(challenge.endDate).toLocaleDateString()}
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 ml-4">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => handleEditChallenge(challenge)}
+                              className="text-blue-500 hover:text-blue-700"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => handleDeleteChallenge(challenge.id)}
+                              disabled={deleteChallengeMutation.isPending}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      {(!weeklyChallenges || weeklyChallenges.length === 0) && (
+                        <div className="text-center text-slate-500 py-8">
+                          <Trophy className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                          <p className="text-sm">No weekly challenges yet</p>
+                          <p className="text-xs text-slate-400 mt-1">Add your first challenge to motivate users</p>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="goals" className="mt-6">
             <Card>
               <CardHeader>
@@ -483,107 +856,106 @@ export default function Admin() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div>
-                    <Label htmlFor="books-completed">Books Completed</Label>
-                    <Input 
-                      id="books-completed"
-                      type="number"
-                      defaultValue="8"
-                      min="0"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">out of 24 target</p>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="courses-completed">Courses Completed</Label>
-                    <Input 
-                      id="courses-completed"
-                      type="number"
-                      defaultValue="2"
-                      min="0"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">out of 6 target</p>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="podcasts-completed">Podcasts Completed</Label>
-                    <Input 
-                      id="podcasts-completed"
-                      type="number"
-                      defaultValue="5"
-                      min="0"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">out of 12 target</p>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="debates-completed">Debates Completed</Label>
-                    <Input 
-                      id="debates-completed"
-                      type="number"
-                      defaultValue="1"
-                      min="0"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">out of 4 target</p>
-                  </div>
-                </div>
-                
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="wisdom-score">Wisdom Score</Label>
-                    <Input 
-                      id="wisdom-score"
-                      type="number"
-                      defaultValue="450"
-                      min="0"
-                      max="1000"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">Current wisdom level</p>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="critic-score">Critic Score</Label>
-                    <Input 
-                      id="critic-score"
-                      type="number"
-                      step="0.1"
-                      defaultValue="4.2"
-                      min="0"
-                      max="5"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">Review quality rating</p>
-                  </div>
-                </div>
-                
-                <div className="mt-6 flex space-x-3">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button className="bg-green-600 text-white" disabled>
-                        Save Goal Settings
+                {isLoadingGoals ? (
+                  <div className="text-center py-8">Loading goal progress...</div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      <div>
+                        <Label htmlFor="books-completed">Books Completed</Label>
+                        <Input 
+                          id="books-completed"
+                          type="number"
+                          defaultValue={goalProgress?.booksCompleted || 8}
+                          min="0"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">out of {goalProgress?.booksTarget || 24} target</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="courses-completed">Courses Completed</Label>
+                        <Input 
+                          id="courses-completed"
+                          type="number"
+                          defaultValue={goalProgress?.coursesCompleted || 2}
+                          min="0"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">out of {goalProgress?.coursesTarget || 6} target</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="podcasts-completed">Podcasts Completed</Label>
+                        <Input 
+                          id="podcasts-completed"
+                          type="number"
+                          defaultValue={goalProgress?.podcastsCompleted || 5}
+                          min="0"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">out of {goalProgress?.podcastsTarget || 12} target</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="debates-completed">Debates Completed</Label>
+                        <Input 
+                          id="debates-completed"
+                          type="number"
+                          defaultValue={goalProgress?.debatesCompleted || 1}
+                          min="0"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">out of {goalProgress?.debatesTarget || 4} target</p>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="wisdom-score">Wisdom Score</Label>
+                        <Input 
+                          id="wisdom-score"
+                          type="number"
+                          defaultValue={goalProgress?.wisdomScore || 450}
+                          min="0"
+                          max="1000"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">Current wisdom level</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="critic-score">Critic Score</Label>
+                        <Input 
+                          id="critic-score"
+                          type="number"
+                          step="0.1"
+                          defaultValue={goalProgress?.criticScore || 4.2}
+                          min="0"
+                          max="5"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">Review quality rating</p>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 flex space-x-3">
+                      <Button 
+                        className="bg-green-600 text-white hover:bg-green-700"
+                        onClick={handleSaveGoalProgress}
+                        disabled={updateGoalProgressMutation.isPending}
+                      >
+                        {updateGoalProgressMutation.isPending ? "Saving..." : "Save Goal Settings"}
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Not implemented yet</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" disabled>
-                        Reset to Demo Values
+                      <Button 
+                        variant="outline"
+                        onClick={handleResetGoalProgress}
+                      >
+                        Reset to Current Values
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Not implemented yet</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

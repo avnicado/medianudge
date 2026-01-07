@@ -104,7 +104,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Weekly challenge route
+  // Weekly challenge routes
   app.get('/api/weekly-challenge', async (req, res) => {
     try {
       const challenge = await simpleStorage.getActiveWeeklyChallenge();
@@ -112,6 +112,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching weekly challenge:", error);
       res.status(500).json({ message: "Failed to fetch weekly challenge" });
+    }
+  });
+
+  app.get('/api/weekly-challenges', async (req, res) => {
+    try {
+      const challenges = await simpleStorage.getAllWeeklyChallenges();
+      res.json(challenges);
+    } catch (error) {
+      console.error("Error fetching weekly challenges:", error);
+      res.status(500).json({ message: "Failed to fetch weekly challenges" });
+    }
+  });
+
+  app.post('/api/weekly-challenges', async (req, res) => {
+    try {
+      const challenge = await simpleStorage.createWeeklyChallenge(req.body);
+      res.json(challenge);
+    } catch (error) {
+      console.error("Error creating weekly challenge:", error);
+      res.status(500).json({ message: "Failed to create weekly challenge" });
+    }
+  });
+
+  app.put('/api/weekly-challenges/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const challenge = await simpleStorage.updateWeeklyChallenge(id, req.body);
+      res.json(challenge);
+    } catch (error) {
+      console.error("Error updating weekly challenge:", error);
+      res.status(500).json({ message: "Failed to update weekly challenge" });
+    }
+  });
+
+  app.delete('/api/weekly-challenges/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await simpleStorage.deleteWeeklyChallenge(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting weekly challenge:", error);
+      res.status(500).json({ message: "Failed to delete weekly challenge" });
     }
   });
 
@@ -171,6 +213,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting guiding question:", error);
       res.status(500).json({ message: "Failed to delete guiding question" });
+    }
+  });
+
+  // Goal progress routes
+  app.get('/api/goal-progress', async (req, res) => {
+    try {
+      const progress = await simpleStorage.getGoalProgress();
+      res.json(progress);
+    } catch (error) {
+      console.error("Error fetching goal progress:", error);
+      res.status(500).json({ message: "Failed to fetch goal progress" });
+    }
+  });
+
+  app.put('/api/goal-progress', async (req, res) => {
+    try {
+      const progress = await simpleStorage.updateGoalProgress(req.body);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error updating goal progress:", error);
+      res.status(500).json({ message: "Failed to update goal progress" });
     }
   });
 
