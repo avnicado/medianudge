@@ -251,6 +251,11 @@ export const insertUserContentSchema = createInsertSchema(userContent).omit({
   updatedAt: true,
 });
 
+export const insertWeeklyChallengeSchema = createInsertSchema(weeklyCharlenges).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -265,4 +270,5 @@ export type InsertYearlyGoal = z.infer<typeof insertYearlyGoalSchema>;
 export type UserContent = typeof userContent.$inferSelect;
 export type InsertUserContent = z.infer<typeof insertUserContentSchema>;
 export type WeeklyChallenge = typeof weeklyCharlenges.$inferSelect;
+export type InsertWeeklyChallenge = z.infer<typeof insertWeeklyChallengeSchema>;
 export type UserChallengeProgress = typeof userChallengeProgress.$inferSelect;
