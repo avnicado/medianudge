@@ -258,16 +258,16 @@ export default function Progress() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30">
         <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-10">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">Progress Dashboard</h1>
-              <p className="text-slate-600 mt-1">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">Progress Dashboard</h1>
+              <p className="text-slate-600 text-lg">
                 Track your intellectual growth and set meaningful goals
               </p>
             </div>
@@ -275,7 +275,7 @@ export default function Progress() {
               <select 
                 value={selectedYear} 
                 onChange={(e) => setSelectedYear(Number(e.target.value))}
-                className="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-4 py-2 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-white shadow-sm font-semibold"
               >
                 <option value={2024}>2024</option>
                 <option value={2023}>2023</option>
@@ -283,7 +283,7 @@ export default function Progress() {
               </select>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline" disabled>
+                  <Button variant="outline" disabled className="border-2 rounded-xl">
                     <Filter className="w-4 h-4 mr-2" />
                     Filter
                   </Button>
@@ -298,72 +298,72 @@ export default function Progress() {
         </div>
 
         {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <CardContent className="p-6 bg-gradient-to-br from-purple-50 to-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Wisdom Score</p>
-                  <p className="text-2xl font-bold text-purple-600">
+                  <p className="text-sm font-semibold text-slate-600 mb-1">Wisdom Score</p>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
                     {getWisdomLevel(450)}
                   </p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-500 font-medium mt-1">
                     {getWisdomPercentile(450)} percentile
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Trophy className="w-6 h-6 text-purple-600" />
+                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Trophy className="w-7 h-7 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <CardContent className="p-6 bg-gradient-to-br from-yellow-50 to-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Critic Score</p>
-                  <p className="text-2xl font-bold text-yellow-600">
+                  <p className="text-sm font-semibold text-slate-600 mb-1">Critic Score</p>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-400 bg-clip-text text-transparent">
                     4.2/5
                   </p>
-                  <p className="text-sm text-slate-500">Review quality</p>
+                  <p className="text-sm text-slate-500 font-medium mt-1">Review quality</p>
                 </div>
-                <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <Star className="w-6 h-6 text-yellow-600" />
+                <div className="w-14 h-14 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Star className="w-7 h-7 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <CardContent className="p-6 bg-gradient-to-br from-green-50 to-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Yearly Progress</p>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-sm font-semibold text-slate-600 mb-1">Yearly Progress</p>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent">
                     {getProgressPercentage().toFixed(0)}%
                   </p>
-                  <p className="text-sm text-slate-500">Goals completed</p>
+                  <p className="text-sm text-slate-500 font-medium mt-1">Goals completed</p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <Target className="w-6 h-6 text-green-600" />
+                <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Target className="w-7 h-7 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
+          <Card className="border-2 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <CardContent className="p-6 bg-gradient-to-br from-blue-50 to-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Total Ratings</p>
-                  <p className="text-2xl font-bold text-blue-600">
+                  <p className="text-sm font-semibold text-slate-600 mb-1">Total Ratings</p>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
                     {mediaRatings.length}
                   </p>
-                  <p className="text-sm text-slate-500">Media consumed</p>
+                  <p className="text-sm text-slate-500 font-medium mt-1">Media consumed</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <BarChart3 className="w-6 h-6 text-blue-600" />
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <BarChart3 className="w-7 h-7 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -372,12 +372,12 @@ export default function Progress() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* Yearly Goals */}
-            <Card>
-              <CardHeader>
+            <Card className="border-2 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="bg-gradient-to-br from-slate-50 to-blue-50 border-b-2 border-slate-100">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center text-xl">
                     <Target className="w-5 h-5 text-primary mr-2" />
                     {selectedYear} Goals & Progress
                   </CardTitle>

@@ -23,9 +23,6 @@ interface MediaCardProps {
 }
 
 export default function MediaCard({ media, onRate, showRating = true }: MediaCardProps) {
-  // Debug logging to ensure media has an ID
-  console.log('MediaCard - media:', media);
-
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'book':
@@ -48,25 +45,27 @@ export default function MediaCard({ media, onRate, showRating = true }: MediaCar
 
 
   return (
-    <Card className="border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
-      <CardContent className="p-4">
-        <div className="flex items-start space-x-3">
-          <div className="w-12 h-16 bg-slate-200 rounded flex items-center justify-center text-slate-400 flex-shrink-0">
+    <Card className="border-2 border-slate-200 hover:border-primary/30 hover:shadow-xl transition-all duration-300 cursor-pointer group overflow-hidden">
+      <CardContent className="p-5">
+        <div className="flex items-start space-x-4">
+          <div className="w-16 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg flex items-center justify-center text-slate-400 flex-shrink-0 shadow-md group-hover:shadow-lg transition-all overflow-hidden">
             {media.imageUrl ? (
               <img 
                 src={media.imageUrl} 
                 alt={media.title}
-                className="w-full h-full object-cover rounded"
+                className="w-full h-full object-cover"
               />
             ) : (
-              getTypeIcon(media.type)
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                {getTypeIcon(media.type)}
+              </div>
             )}
           </div>
           
           <div className="flex-1 min-w-0">
-            <h4 className="font-medium text-slate-900 truncate">{media.title}</h4>
+            <h4 className="font-bold text-slate-900 truncate group-hover:text-primary transition-colors">{media.title}</h4>
             {media.author && (
-              <p className="text-sm text-slate-600 truncate">{media.author}</p>
+              <p className="text-sm text-slate-600 truncate font-medium">{media.author}</p>
             )}
             
             <TooltipProvider>
@@ -137,12 +136,11 @@ export default function MediaCard({ media, onRate, showRating = true }: MediaCar
             )}
             
             <div className="flex items-center justify-between mt-3">
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-600 font-medium bg-slate-100 px-2 py-1 rounded-full">
                 {media.totalRatings || 0} ratings
               </span>
               
-              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" onClick={() => {
-                console.log('Navigating to media detail with ID:', media.id);
+              <Button variant="ghost" size="sm" className="text-primary hover:text-white hover:bg-gradient-to-r hover:from-primary hover:to-secondary transition-all" onClick={() => {
                 window.location.href = `/media-detail?id=${media.id}`;
               }}>
                 View Details
