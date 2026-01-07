@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress as ProgressBar } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   Trophy, 
   Star, 
@@ -185,8 +186,9 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <Navigation />
+    <TooltipProvider>
+      <div className="min-h-screen bg-slate-50">
+        <Navigation />
       
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Profile Header */}
@@ -211,16 +213,30 @@ export default function Profile() {
                   
                   <div className="flex items-center space-x-2">
                     {!isOwnProfile && (
-                      <Button className="bg-primary text-white hover:bg-primary/90">
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        Follow
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button className="bg-primary text-white" disabled>
+                            <UserPlus className="w-4 h-4 mr-2" />
+                            Follow
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Not implemented yet</p>
+                        </TooltipContent>
+                      </Tooltip>
                     )}
                     {isOwnProfile && (
-                      <Button variant="outline">
-                        <Edit className="w-4 h-4 mr-2" />
-                        Edit Profile
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="outline" disabled>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Edit Profile
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Not implemented yet</p>
+                        </TooltipContent>
+                      </Tooltip>
                     )}
                   </div>
                 </div>
@@ -423,9 +439,16 @@ export default function Profile() {
                             </div>
                           </div>
                           {isOwnProfile && (
-                            <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
-                              <Edit className="w-4 h-4" />
-                            </Button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" size="sm" className="text-primary" disabled>
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Not implemented yet</p>
+                              </TooltipContent>
+                            </Tooltip>
                           )}
                         </div>
                       </div>
@@ -519,5 +542,6 @@ export default function Profile() {
         </Tabs>
       </main>
     </div>
+    </TooltipProvider>
   );
 }

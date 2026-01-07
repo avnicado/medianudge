@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Trash2, Edit, Eye, Target, Brain, Info, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -210,8 +211,9 @@ export default function Admin() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="max-w-4xl mx-auto p-6">
+    <TooltipProvider>
+      <div className="min-h-screen bg-slate-50">
+        <div className="max-w-4xl mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Admin Panel</h1>
           <p className="text-slate-600">Manage media items, user goals, and guiding questions</p>
@@ -561,12 +563,26 @@ export default function Admin() {
                 </div>
                 
                 <div className="mt-6 flex space-x-3">
-                  <Button className="bg-green-600 hover:bg-green-700 text-white">
-                    Save Goal Settings
-                  </Button>
-                  <Button variant="outline">
-                    Reset to Demo Values
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button className="bg-green-600 text-white" disabled>
+                        Save Goal Settings
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Not implemented yet</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" disabled>
+                        Reset to Demo Values
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Not implemented yet</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </CardContent>
             </Card>
@@ -659,5 +675,6 @@ export default function Admin() {
         </Tabs>
       </div>
     </div>
+    </TooltipProvider>
   );
 }
