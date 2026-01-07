@@ -135,6 +135,18 @@ export default function Admin() {
     },
   });
 
+  // Fetch goal progress
+  const { data: goalProgress, isLoading: isLoadingGoals } = useQuery({
+    queryKey: ["/api/goal-progress"],
+    queryFn: async () => {
+      const response = await fetch("/api/goal-progress");
+      if (!response.ok) {
+        throw new Error("Failed to fetch goal progress");
+      }
+      return response.json();
+    },
+  });
+
   const createMediaItemMutation = useMutation({
     mutationFn: async (data: MediaItemFormData) => {
       const payload = {
@@ -296,6 +308,26 @@ export default function Admin() {
     },
   });
 
+  const updateGoalProgressMutation = useMutation({
+    mutationFn: async (data: any) => {
+      await apiRequest("PUT", "/api/goal-progress", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/goal-progress"] });
+      toast({
+        title: "Success",
+        description: "Goal progress updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update goal progress",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this media item?")) {
       await deleteMediaItemMutation.mutateAsync(id);
@@ -339,6 +371,35 @@ export default function Admin() {
   const handleDeleteChallenge = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this weekly challenge?")) {
       await deleteChallengeMutation.mutateAsync(id);
+    }
+  };
+
+  const handleSaveGoalProgress = async () => {
+    const booksCompleted = parseInt((document.getElementById('books-completed') as HTMLInputElement)?.value || '0');
+    const coursesCompleted = parseInt((document.getElementById('courses-completed') as HTMLInputElement)?.value || '0');
+    const podcastsCompleted = parseInt((document.getElementById('podcasts-completed') as HTMLInputElement)?.value || '0');
+    const debatesCompleted = parseInt((document.getElementById('debates-completed') as HTMLInputElement)?.value || '0');
+    const wisdomScore = parseInt((document.getElementById('wisdom-score') as HTMLInputElement)?.value || '0');
+    const criticScore = parseFloat((document.getElementById('critic-score') as HTMLInputElement)?.value || '0');
+
+    await updateGoalProgressMutation.mutateAsync({
+      booksCompleted,
+      coursesCompleted,
+      podcastsCompleted,
+      debatesCompleted,
+      wisdomScore,
+      criticScore,
+    });
+  };
+
+  const handleResetGoalProgress = () => {
+    if (goalProgress) {
+      (document.getElementById('books-completed') as HTMLInputElement).value = String(goalProgress.booksCompleted || 8);
+      (document.getElementById('courses-completed') as HTMLInputElement).value = String(goalProgress.coursesCompleted || 2);
+      (document.getElementById('podcasts-completed') as HTMLInputElement).value = String(goalProgress.podcastsCompleted || 5);
+      (document.getElementById('debates-completed') as HTMLInputElement).value = String(goalProgress.debatesCompleted || 1);
+      (document.getElementById('wisdom-score') as HTMLInputElement).value = String(goalProgress.wisdomScore || 450);
+      (document.getElementById('critic-score') as HTMLInputElement).value = String(goalProgress.criticScore || 4.2);
     }
   };
 
@@ -795,107 +856,106 @@ export default function Admin() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div>
-                    <Label htmlFor="books-completed">Books Completed</Label>
-                    <Input 
-                      id="books-completed"
-                      type="number"
-                      defaultValue="8"
-                      min="0"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">out of 24 target</p>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="courses-completed">Courses Completed</Label>
-                    <Input 
-                      id="courses-completed"
-                      type="number"
-                      defaultValue="2"
-                      min="0"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">out of 6 target</p>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="podcasts-completed">Podcasts Completed</Label>
-                    <Input 
-                      id="podcasts-completed"
-                      type="number"
-                      defaultValue="5"
-                      min="0"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">out of 12 target</p>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="debates-completed">Debates Completed</Label>
-                    <Input 
-                      id="debates-completed"
-                      type="number"
-                      defaultValue="1"
-                      min="0"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">out of 4 target</p>
-                  </div>
-                </div>
-                
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="wisdom-score">Wisdom Score</Label>
-                    <Input 
-                      id="wisdom-score"
-                      type="number"
-                      defaultValue="450"
-                      min="0"
-                      max="1000"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">Current wisdom level</p>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="critic-score">Critic Score</Label>
-                    <Input 
-                      id="critic-score"
-                      type="number"
-                      step="0.1"
-                      defaultValue="4.2"
-                      min="0"
-                      max="5"
-                      className="mt-1"
-                    />
-                    <p className="text-sm text-slate-500 mt-1">Review quality rating</p>
-                  </div>
-                </div>
-                
-                <div className="mt-6 flex space-x-3">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button className="bg-green-600 text-white" disabled>
-                        Save Goal Settings
+                {isLoadingGoals ? (
+                  <div className="text-center py-8">Loading goal progress...</div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      <div>
+                        <Label htmlFor="books-completed">Books Completed</Label>
+                        <Input 
+                          id="books-completed"
+                          type="number"
+                          defaultValue={goalProgress?.booksCompleted || 8}
+                          min="0"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">out of {goalProgress?.booksTarget || 24} target</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="courses-completed">Courses Completed</Label>
+                        <Input 
+                          id="courses-completed"
+                          type="number"
+                          defaultValue={goalProgress?.coursesCompleted || 2}
+                          min="0"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">out of {goalProgress?.coursesTarget || 6} target</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="podcasts-completed">Podcasts Completed</Label>
+                        <Input 
+                          id="podcasts-completed"
+                          type="number"
+                          defaultValue={goalProgress?.podcastsCompleted || 5}
+                          min="0"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">out of {goalProgress?.podcastsTarget || 12} target</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="debates-completed">Debates Completed</Label>
+                        <Input 
+                          id="debates-completed"
+                          type="number"
+                          defaultValue={goalProgress?.debatesCompleted || 1}
+                          min="0"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">out of {goalProgress?.debatesTarget || 4} target</p>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="wisdom-score">Wisdom Score</Label>
+                        <Input 
+                          id="wisdom-score"
+                          type="number"
+                          defaultValue={goalProgress?.wisdomScore || 450}
+                          min="0"
+                          max="1000"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">Current wisdom level</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="critic-score">Critic Score</Label>
+                        <Input 
+                          id="critic-score"
+                          type="number"
+                          step="0.1"
+                          defaultValue={goalProgress?.criticScore || 4.2}
+                          min="0"
+                          max="5"
+                          className="mt-1"
+                        />
+                        <p className="text-sm text-slate-500 mt-1">Review quality rating</p>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 flex space-x-3">
+                      <Button 
+                        className="bg-green-600 text-white hover:bg-green-700"
+                        onClick={handleSaveGoalProgress}
+                        disabled={updateGoalProgressMutation.isPending}
+                      >
+                        {updateGoalProgressMutation.isPending ? "Saving..." : "Save Goal Settings"}
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Not implemented yet</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" disabled>
-                        Reset to Demo Values
+                      <Button 
+                        variant="outline"
+                        onClick={handleResetGoalProgress}
+                      >
+                        Reset to Current Values
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Not implemented yet</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

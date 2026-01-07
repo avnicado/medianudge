@@ -216,6 +216,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Goal progress routes
+  app.get('/api/goal-progress', async (req, res) => {
+    try {
+      const progress = await simpleStorage.getGoalProgress();
+      res.json(progress);
+    } catch (error) {
+      console.error("Error fetching goal progress:", error);
+      res.status(500).json({ message: "Failed to fetch goal progress" });
+    }
+  });
+
+  app.put('/api/goal-progress', async (req, res) => {
+    try {
+      const progress = await simpleStorage.updateGoalProgress(req.body);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error updating goal progress:", error);
+      res.status(500).json({ message: "Failed to update goal progress" });
+    }
+  });
+
   // Disabled user-specific routes (return empty responses)
   
   app.get('/api/user/media-ratings', (req, res) => res.json([]));

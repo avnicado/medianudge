@@ -24,6 +24,10 @@ export interface ISimpleStorage {
   getGuidingQuestions(): Promise<GuidingQuestion[]>;
   createGuidingQuestion(question: InsertGuidingQuestion): Promise<GuidingQuestion>;
   deleteGuidingQuestion(id: number): Promise<void>;
+  
+  // Goal and progress management
+  getGoalProgress(): Promise<any>;
+  updateGoalProgress(data: any): Promise<any>;
 }
 
 export class SimpleStorage implements ISimpleStorage {
@@ -43,6 +47,19 @@ export class SimpleStorage implements ISimpleStorage {
     }
   ];
   private nextChallengeId = 2;
+  
+  private goalProgress = {
+    booksCompleted: 8,
+    booksTarget: 24,
+    coursesCompleted: 2,
+    coursesTarget: 6,
+    podcastsCompleted: 5,
+    podcastsTarget: 12,
+    debatesCompleted: 1,
+    debatesTarget: 4,
+    wisdomScore: 450,
+    criticScore: 4.2,
+  };
   
   private mediaItems: MediaItem[] = [
     {
@@ -314,6 +331,15 @@ export class SimpleStorage implements ISimpleStorage {
     if (index !== -1) {
       this.guidingQuestions.splice(index, 1);
     }
+  }
+
+  async getGoalProgress(): Promise<any> {
+    return this.goalProgress;
+  }
+
+  async updateGoalProgress(data: any): Promise<any> {
+    this.goalProgress = { ...this.goalProgress, ...data };
+    return this.goalProgress;
   }
 }
 
