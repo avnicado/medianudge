@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress as ProgressBar } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   BookOpen, 
   GraduationCap, 
@@ -106,8 +107,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <Navigation />
+    <TooltipProvider>
+      <div className="min-h-screen bg-slate-50">
+        <Navigation />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
@@ -304,15 +306,29 @@ export default function Home() {
                         Rated {rating.rating}★ • {new Date(rating.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
-                      <Edit className="w-4 h-4" />
-                    </Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" disabled>
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Not implemented yet</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
                 ))}
               </div>
-              <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5">
-                View Full History
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" className="w-full mt-4 text-primary hover:bg-primary/5" disabled>
+                    View Full History
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Not implemented yet</p>
+                </TooltipContent>
+              </Tooltip>
             </CardContent>
           </Card>
 
@@ -345,9 +361,16 @@ export default function Home() {
                 </div>
               )}
               
-              <Button className="w-full bg-primary text-white hover:bg-primary/90">
-                Find Challenge Content
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button className="w-full bg-primary text-white hover:bg-primary/90" disabled>
+                    Find Challenge Content
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Not implemented yet</p>
+                </TooltipContent>
+              </Tooltip>
             </CardContent>
           </Card>
         </div>
@@ -404,9 +427,16 @@ export default function Home() {
               <div className="text-sm">
                 <span className="font-medium text-slate-900">Top Contributors This Week</span>
               </div>
-              <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium text-sm">
-                View Leaderboard
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium text-sm" disabled>
+                    View Leaderboard
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Not implemented yet</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </CardContent>
         </Card>
@@ -444,10 +474,17 @@ export default function Home() {
             </div>
             
             <div className="flex items-center justify-between">
-              <Button className="bg-primary text-white hover:bg-primary/90 font-medium">
-                <Plus className="w-4 h-4 mr-2" />
-                Create Content
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button className="bg-primary text-white hover:bg-primary/90 font-medium" disabled>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Content
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Not implemented yet</p>
+                </TooltipContent>
+              </Tooltip>
               <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium" onClick={() => window.location.href = '/progress'}>
                 View All Contributions
               </Button>
@@ -456,5 +493,6 @@ export default function Home() {
         </Card>
       </main>
     </div>
+    </TooltipProvider>
   );
 }

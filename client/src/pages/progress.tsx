@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -256,8 +257,9 @@ export default function Progress() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <Navigation />
+    <TooltipProvider>
+      <div className="min-h-screen bg-slate-50">
+        <Navigation />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
@@ -279,10 +281,17 @@ export default function Progress() {
                 <option value={2023}>2023</option>
                 <option value={2022}>2022</option>
               </select>
-              <Button variant="outline">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" disabled>
+                    <Filter className="w-4 h-4 mr-2" />
+                    Filter
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Not implemented yet</p>
+                </TooltipContent>
+              </Tooltip>
 
             </div>
           </div>
@@ -612,9 +621,16 @@ export default function Progress() {
                   </div>
                 )}
                 
-                <Button className="w-full bg-primary text-white hover:bg-primary/90">
-                  Find Challenge Content
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button className="w-full bg-primary text-white hover:bg-primary/90" disabled>
+                      Find Challenge Content
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Not implemented yet</p>
+                  </TooltipContent>
+                </Tooltip>
               </CardContent>
             </Card>
 
@@ -692,5 +708,6 @@ export default function Progress() {
         </div>
       </main>
     </div>
+    </TooltipProvider>
   );
 }

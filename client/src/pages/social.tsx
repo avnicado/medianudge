@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   Users, 
   Trophy, 
@@ -67,8 +68,9 @@ export default function Social() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <Navigation />
+    <TooltipProvider>
+      <div className="min-h-screen bg-slate-50">
+        <Navigation />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
@@ -81,17 +83,32 @@ export default function Social() {
               </p>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-                <Input 
-                  placeholder="Search users or content..."
-                  className="pl-10 w-80"
-                />
-              </div>
-              <Button variant="outline">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <Input 
+                      placeholder="Search users or content..."
+                      className="pl-10 w-80"
+                      disabled
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Not implemented yet</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" disabled>
+                    <Filter className="w-4 h-4 mr-2" />
+                    Filter
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Not implemented yet</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
         </div>
@@ -162,14 +179,28 @@ export default function Social() {
                               </Badge>
                               
                               <div className="flex items-center space-x-4 text-sm text-slate-500">
-                                <button className="flex items-center space-x-1 hover:text-primary">
-                                  <MessageCircle className="w-4 h-4" />
-                                  <span>Comment</span>
-                                </button>
-                                <button className="flex items-center space-x-1 hover:text-primary">
-                                  <Trophy className="w-4 h-4" />
-                                  <span>Appreciate</span>
-                                </button>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button className="flex items-center space-x-1 hover:text-primary" disabled>
+                                      <MessageCircle className="w-4 h-4" />
+                                      <span>Comment</span>
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Not implemented yet</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button className="flex items-center space-x-1 hover:text-primary" disabled>
+                                      <Trophy className="w-4 h-4" />
+                                      <span>Appreciate</span>
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Not implemented yet</p>
+                                  </TooltipContent>
+                                </Tooltip>
                               </div>
                             </div>
                           </div>
@@ -365,18 +396,32 @@ export default function Social() {
                           {getWisdomLevel(user.wisdomScore || 0)}
                         </p>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
-                        <UserPlus className="w-4 h-4" />
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" disabled>
+                            <UserPlus className="w-4 h-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Not implemented yet</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   ))}
                 </div>
                 
                 <Separator className="my-4" />
                 
-                <Button variant="ghost" className="w-full text-primary hover:bg-primary/5">
-                  View Leaderboard
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" className="w-full text-primary hover:bg-primary/5" disabled>
+                      View Leaderboard
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Not implemented yet</p>
+                  </TooltipContent>
+                </Tooltip>
               </CardContent>
             </Card>
 
@@ -416,15 +461,36 @@ export default function Social() {
                 <Separator className="my-4" />
                 
                 <div className="space-y-2">
-                  <Button variant="ghost" className="w-full justify-start text-primary hover:bg-primary/5">
-                    View All Followers
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start text-primary hover:bg-primary/5">
-                    View All Following
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start text-primary hover:bg-primary/5">
-                    Discover New Users
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" className="w-full justify-start text-primary hover:bg-primary/5" disabled>
+                        View All Followers
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Not implemented yet</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" className="w-full justify-start text-primary hover:bg-primary/5" disabled>
+                        View All Following
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Not implemented yet</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" className="w-full justify-start text-primary hover:bg-primary/5" disabled>
+                        Discover New Users
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Not implemented yet</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </CardContent>
             </Card>
@@ -460,14 +526,22 @@ export default function Social() {
                 
                 <Separator className="my-4" />
                 
-                <Button className="w-full bg-primary text-white hover:bg-primary/90">
-                  Create New Content
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button className="w-full bg-primary text-white hover:bg-primary/90" disabled>
+                      Create New Content
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Not implemented yet</p>
+                  </TooltipContent>
+                </Tooltip>
               </CardContent>
             </Card>
           </div>
         </div>
       </main>
     </div>
+    </TooltipProvider>
   );
 }

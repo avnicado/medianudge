@@ -211,6 +211,49 @@ npm start
 - **Containerization**: Docker, Docker Compose
 - **Build Tools**: Vite, ESBuild
 
+## Features To Implement
+
+The following features are currently marked as "Not implemented yet" in the UI. They are planned for future development:
+
+### User Profile & Authentication
+- [ ] Edit user profile (name, bio, profile picture)
+- [ ] Follow/unfollow users
+- [ ] View followers and following lists
+- [ ] Discover new users based on interests
+
+### Content Management
+- [ ] Create user-generated content (articles, reflections, summaries)
+- [ ] Edit existing media ratings and reviews
+- [ ] View full rating history with pagination
+- [ ] Filter and sort media items
+
+### Social Features  
+- [ ] Comment on other users' ratings and reviews
+- [ ] Appreciate/like content and reviews
+- [ ] View detailed leaderboards with rankings
+- [ ] Search for users and content
+- [ ] Advanced filtering options across all pages
+
+### Goals & Challenges
+- [ ] Update yearly goal progress manually
+- [ ] Find and browse challenge-specific content
+- [ ] Track weekly challenge participation
+- [ ] Set and edit guiding questions (currently view-only on Progress page)
+
+### Admin Features
+- [ ] Manual goal progress adjustments
+- [ ] Reset demo data to default values
+- [ ] Bulk import media items
+- [ ] User management dashboard
+
+### General Improvements
+- [ ] Pagination for all list views
+- [ ] Real-time notifications
+- [ ] Export data (ratings, progress) to CSV/PDF
+- [ ] Dark mode theme support
+- [ ] Mobile app version
+- [ ] Email notifications for challenges and updates
+
 ## Security Notes
 
 - No authentication system required - fully open platform
