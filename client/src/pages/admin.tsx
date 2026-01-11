@@ -62,8 +62,12 @@ export default function Admin() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isQuestionDialogOpen, setIsQuestionDialogOpen] = useState(false);
   const [isChallengeDialogOpen, setIsChallengeDialogOpen] = useState(false);
+  const [isRatingDialogOpen, setIsRatingDialogOpen] = useState(false);
+  const [isContentDialogOpen, setIsContentDialogOpen] = useState(false);
   const [editingChallenge, setEditingChallenge] = useState<any>(null);
   const [editingQuestion, setEditingQuestion] = useState<any>(null);
+  const [editingRating, setEditingRating] = useState<any>(null);
+  const [editingContent, setEditingContent] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -1129,10 +1133,137 @@ export default function Admin() {
           <TabsContent value="ratings" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Star className="w-5 h-5 text-primary mr-2" />
-                  Demo User Ratings Management
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center">
+                    <Star className="w-5 h-5 text-primary mr-2" />
+                    Demo User Ratings Management
+                  </CardTitle>
+                  <Dialog open={isRatingDialogOpen} onOpenChange={(open) => {
+                    setIsRatingDialogOpen(open);
+                    if (!open) {
+                      setEditingRating(null);
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Rating
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>{editingRating ? 'Edit' : 'Add'} Demo Rating</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Media Item</Label>
+                          <Select 
+                            defaultValue={editingRating?.mediaId?.toString()} 
+                            onValueChange={(value) => {
+                              const form = document.getElementById('rating-form') as any;
+                              if (form) form.mediaId = parseInt(value);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select media item" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {mediaItems?.map((item: any) => (
+                                <SelectItem key={item.id} value={item.id.toString()}>
+                                  {item.title} ({item.type})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label>Review</Label>
+                          <Textarea 
+                            id="rating-review"
+                            defaultValue={editingRating?.review || ''}
+                            placeholder="Write your review..."
+                            className="min-h-[100px]"
+                          />
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label>Mind Expanding (1-5)</Label>
+                            <Input 
+                              id="rating-mind"
+                              type="number" 
+                              min="1" 
+                              max="5" 
+                              defaultValue={editingRating?.mindExpandingRating || 3}
+                            />
+                          </div>
+                          <div>
+                            <Label>Informative (1-5)</Label>
+                            <Input 
+                              id="rating-info"
+                              type="number" 
+                              min="1" 
+                              max="5" 
+                              defaultValue={editingRating?.informativeRating || 3}
+                            />
+                          </div>
+                          <div>
+                            <Label>Entertaining (1-5)</Label>
+                            <Input 
+                              id="rating-fun"
+                              type="number" 
+                              min="1" 
+                              max="5" 
+                              defaultValue={editingRating?.entertainingRating || 3}
+                            />
+                          </div>
+                        </div>
+                        <Button 
+                          className="w-full"
+                          onClick={async () => {
+                            const form = document.getElementById('rating-form') as any;
+                            const review = (document.getElementById('rating-review') as HTMLTextAreaElement).value;
+                            const mind = parseInt((document.getElementById('rating-mind') as HTMLInputElement).value);
+                            const info = parseInt((document.getElementById('rating-info') as HTMLInputElement).value);
+                            const fun = parseInt((document.getElementById('rating-fun') as HTMLInputElement).value);
+                            
+                            if (!form?.mediaId) {
+                              toast({ title: "Error", description: "Please select a media item", variant: "destructive" });
+                              return;
+                            }
+                            
+                            const data = {
+                              mediaId: form.mediaId,
+                              review,
+                              mindExpandingRating: mind,
+                              informativeRating: info,
+                              entertainingRating: fun,
+                              userId: "demo-user"
+                            };
+                            
+                            try {
+                              if (editingRating) {
+                                await apiRequest('PUT', `/api/demo-data/ratings/${editingRating.id}`, data);
+                              } else {
+                                await apiRequest('POST', '/api/demo-data/ratings', data);
+                              }
+                              queryClient.invalidateQueries({ queryKey: ["/api/demo-data/ratings"] });
+                              queryClient.invalidateQueries({ queryKey: ["/api/user/media-ratings"] });
+                              queryClient.invalidateQueries({ queryKey: ["/api/user/activity"] });
+                              setIsRatingDialogOpen(false);
+                              setEditingRating(null);
+                              toast({ title: "Success", description: `Rating ${editingRating ? 'updated' : 'created'} successfully` });
+                            } catch (error) {
+                              toast({ title: "Error", description: `Failed to ${editingRating ? 'update' : 'create'} rating`, variant: "destructive" });
+                            }
+                          }}
+                        >
+                          {editingRating ? 'Update Rating' : 'Create Rating'}
+                        </Button>
+                      </div>
+                      <form id="rating-form" style={{display: 'none'}} />
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </CardHeader>
               <CardContent>
                 {isLoadingRatings ? (
@@ -1153,21 +1284,34 @@ export default function Admin() {
                               <span>{new Date(rating.createdAt).toLocaleDateString()}</span>
                             </div>
                           </div>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={async () => {
-                              if (window.confirm('Delete this rating?')) {
-                                await apiRequest('DELETE', `/api/demo-data/ratings/${rating.id}`);
-                                queryClient.invalidateQueries({ queryKey: ["/api/demo-data/ratings"] });
-                                queryClient.invalidateQueries({ queryKey: ["/api/user/media-ratings"] });
-                                queryClient.invalidateQueries({ queryKey: ["/api/user/activity"] });
-                              }
-                            }}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          <div className="flex space-x-2 ml-4">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => {
+                                setEditingRating(rating);
+                                setIsRatingDialogOpen(true);
+                              }}
+                              className="text-blue-500 hover:text-blue-700"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={async () => {
+                                if (window.confirm('Delete this rating?')) {
+                                  await apiRequest('DELETE', `/api/demo-data/ratings/${rating.id}`);
+                                  queryClient.invalidateQueries({ queryKey: ["/api/demo-data/ratings"] });
+                                  queryClient.invalidateQueries({ queryKey: ["/api/user/media-ratings"] });
+                                  queryClient.invalidateQueries({ queryKey: ["/api/user/activity"] });
+                                }
+                              }}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))
                     ) : (
@@ -1185,10 +1329,143 @@ export default function Admin() {
           <TabsContent value="content" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Lightbulb className="w-5 h-5 text-primary mr-2" />
-                  Demo User Content Management
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center">
+                    <Lightbulb className="w-5 h-5 text-primary mr-2" />
+                    Demo User Content Management
+                  </CardTitle>
+                  <Dialog open={isContentDialogOpen} onOpenChange={(open) => {
+                    setIsContentDialogOpen(open);
+                    if (!open) {
+                      setEditingContent(null);
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Content
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>{editingContent ? 'Edit' : 'Add'} Demo Content</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Title</Label>
+                          <Input 
+                            id="content-title"
+                            defaultValue={editingContent?.title || ''}
+                            placeholder="Content title..."
+                          />
+                        </div>
+                        <div>
+                          <Label>Type</Label>
+                          <Select 
+                            defaultValue={editingContent?.type || 'article'}
+                            onValueChange={(value) => {
+                              const form = document.getElementById('content-form') as any;
+                              if (form) form.type = value;
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select content type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="article">Article</SelectItem>
+                              <SelectItem value="video">Video</SelectItem>
+                              <SelectItem value="debate_contribution">Debate Contribution</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label>Description</Label>
+                          <Textarea 
+                            id="content-description"
+                            defaultValue={editingContent?.content || ''}
+                            placeholder="Content description..."
+                            className="min-h-[100px]"
+                          />
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label>Views</Label>
+                            <Input 
+                              id="content-views"
+                              type="number" 
+                              min="0" 
+                              defaultValue={editingContent?.views || 0}
+                            />
+                          </div>
+                          <div>
+                            <Label>Avg Rating</Label>
+                            <Input 
+                              id="content-rating"
+                              type="number" 
+                              step="0.1"
+                              min="0" 
+                              max="5" 
+                              defaultValue={editingContent?.avgRating || 0}
+                            />
+                          </div>
+                          <div>
+                            <Label>Total Ratings</Label>
+                            <Input 
+                              id="content-total-ratings"
+                              type="number" 
+                              min="0" 
+                              defaultValue={editingContent?.totalRatings || 0}
+                            />
+                          </div>
+                        </div>
+                        <Button 
+                          className="w-full"
+                          onClick={async () => {
+                            const form = document.getElementById('content-form') as any;
+                            const title = (document.getElementById('content-title') as HTMLInputElement).value;
+                            const content = (document.getElementById('content-description') as HTMLTextAreaElement).value;
+                            const views = parseInt((document.getElementById('content-views') as HTMLInputElement).value);
+                            const avgRating = parseFloat((document.getElementById('content-rating') as HTMLInputElement).value);
+                            const totalRatings = parseInt((document.getElementById('content-total-ratings') as HTMLInputElement).value);
+                            
+                            if (!title) {
+                              toast({ title: "Error", description: "Please enter a title", variant: "destructive" });
+                              return;
+                            }
+                            
+                            const data = {
+                              title,
+                              type: form?.type || editingContent?.type || 'article',
+                              content,
+                              views,
+                              avgRating,
+                              totalRatings,
+                              userId: "demo-user"
+                            };
+                            
+                            try {
+                              if (editingContent) {
+                                await apiRequest('PUT', `/api/demo-data/content/${editingContent.id}`, data);
+                              } else {
+                                await apiRequest('POST', '/api/demo-data/content', data);
+                              }
+                              queryClient.invalidateQueries({ queryKey: ["/api/demo-data/content"] });
+                              queryClient.invalidateQueries({ queryKey: ["/api/user/content"] });
+                              setIsContentDialogOpen(false);
+                              setEditingContent(null);
+                              toast({ title: "Success", description: `Content ${editingContent ? 'updated' : 'created'} successfully` });
+                            } catch (error) {
+                              toast({ title: "Error", description: `Failed to ${editingContent ? 'update' : 'create'} content`, variant: "destructive" });
+                            }
+                          }}
+                        >
+                          {editingContent ? 'Update Content' : 'Create Content'}
+                        </Button>
+                      </div>
+                      <form id="content-form" style={{display: 'none'}} />
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </CardHeader>
               <CardContent>
                 {isLoadingContent ? (
@@ -1210,20 +1487,33 @@ export default function Admin() {
                               <span>{new Date(content.createdAt).toLocaleDateString()}</span>
                             </div>
                           </div>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={async () => {
-                              if (window.confirm('Delete this content?')) {
-                                await apiRequest('DELETE', `/api/demo-data/content/${content.id}`);
-                                queryClient.invalidateQueries({ queryKey: ["/api/demo-data/content"] });
-                                queryClient.invalidateQueries({ queryKey: ["/api/user/content"] });
-                              }
-                            }}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          <div className="flex space-x-2 ml-4">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => {
+                                setEditingContent(content);
+                                setIsContentDialogOpen(true);
+                              }}
+                              className="text-blue-500 hover:text-blue-700"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={async () => {
+                                if (window.confirm('Delete this content?')) {
+                                  await apiRequest('DELETE', `/api/demo-data/content/${content.id}`);
+                                  queryClient.invalidateQueries({ queryKey: ["/api/demo-data/content"] });
+                                  queryClient.invalidateQueries({ queryKey: ["/api/user/content"] });
+                                }
+                              }}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))
                     ) : (
