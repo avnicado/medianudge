@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Trash2, Edit, Eye, Target, Brain, Info, Heart, Trophy } from "lucide-react";
+import { Upload, Plus, BookOpen, GraduationCap, Headphones, Film, Users, Gamepad2, Trash2, Edit, Eye, Target, Brain, Info, Heart, Trophy, Star, Lightbulb } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -143,6 +143,30 @@ export default function Admin() {
       const response = await fetch("/api/goal-progress");
       if (!response.ok) {
         throw new Error("Failed to fetch goal progress");
+      }
+      return response.json();
+    },
+  });
+
+  // Fetch demo ratings
+  const { data: demoRatings, isLoading: isLoadingRatings } = useQuery({
+    queryKey: ["/api/demo-data/ratings"],
+    queryFn: async () => {
+      const response = await fetch("/api/demo-data/ratings");
+      if (!response.ok) {
+        throw new Error("Failed to fetch demo ratings");
+      }
+      return response.json();
+    },
+  });
+
+  // Fetch demo content
+  const { data: demoContent, isLoading: isLoadingContent } = useQuery({
+    queryKey: ["/api/demo-data/content"],
+    queryFn: async () => {
+      const response = await fetch("/api/demo-data/content");
+      if (!response.ok) {
+        throw new Error("Failed to fetch demo content");
       }
       return response.json();
     },
@@ -450,11 +474,13 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="media" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="media">Media Items</TabsTrigger>
             <TabsTrigger value="challenges">Weekly Challenges</TabsTrigger>
             <TabsTrigger value="goals">Goal Settings</TabsTrigger>
             <TabsTrigger value="questions">Guiding Questions</TabsTrigger>
+            <TabsTrigger value="ratings">Demo Ratings</TabsTrigger>
+            <TabsTrigger value="content">Demo Content</TabsTrigger>
           </TabsList>
 
           <TabsContent value="media" className="mt-6">
@@ -1096,6 +1122,118 @@ export default function Admin() {
                     </>
                   )}
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="ratings" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Star className="w-5 h-5 text-primary mr-2" />
+                  Demo User Ratings Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoadingRatings ? (
+                  <div className="text-center py-8">Loading demo ratings...</div>
+                ) : (
+                  <div className="space-y-3">
+                    {demoRatings && demoRatings.length > 0 ? (
+                      demoRatings.map((rating: any) => (
+                        <div key={rating.id} className="flex items-start justify-between p-4 bg-slate-50 rounded-lg border-2 border-slate-200">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-slate-900 mb-1">{rating.media?.title || 'Unknown Media'}</h3>
+                            <p className="text-sm text-slate-600 mb-2">{rating.review}</p>
+                            <div className="flex items-center space-x-4 text-sm text-slate-500">
+                              <span>Rating: {rating.rating}★</span>
+                              <span>Mind: {rating.mindExpandingRating}</span>
+                              <span>Info: {rating.informativeRating}</span>
+                              <span>Fun: {rating.entertainingRating}</span>
+                              <span>{new Date(rating.createdAt).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={async () => {
+                              if (window.confirm('Delete this rating?')) {
+                                await apiRequest('DELETE', `/api/demo-data/ratings/${rating.id}`);
+                                queryClient.invalidateQueries({ queryKey: ["/api/demo-data/ratings"] });
+                                queryClient.invalidateQueries({ queryKey: ["/api/user/media-ratings"] });
+                                queryClient.invalidateQueries({ queryKey: ["/api/user/activity"] });
+                              }
+                            }}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center text-slate-500 py-8">
+                        <Star className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                        <p className="text-sm">No demo ratings yet</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="content" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Lightbulb className="w-5 h-5 text-primary mr-2" />
+                  Demo User Content Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoadingContent ? (
+                  <div className="text-center py-8">Loading demo content...</div>
+                ) : (
+                  <div className="space-y-3">
+                    {demoContent && demoContent.length > 0 ? (
+                      demoContent.map((content: any) => (
+                        <div key={content.id} className="flex items-start justify-between p-4 bg-slate-50 rounded-lg border-2 border-slate-200">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <h3 className="font-semibold text-slate-900">{content.title}</h3>
+                              <Badge variant="secondary" className="text-xs">{content.type}</Badge>
+                            </div>
+                            <p className="text-sm text-slate-600 mb-2">{content.content}</p>
+                            <div className="flex items-center space-x-4 text-sm text-slate-500">
+                              <span>{content.views} views</span>
+                              <span>{content.avgRating?.toFixed(1)}★ ({content.totalRatings} ratings)</span>
+                              <span>{new Date(content.createdAt).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={async () => {
+                              if (window.confirm('Delete this content?')) {
+                                await apiRequest('DELETE', `/api/demo-data/content/${content.id}`);
+                                queryClient.invalidateQueries({ queryKey: ["/api/demo-data/content"] });
+                                queryClient.invalidateQueries({ queryKey: ["/api/user/content"] });
+                              }
+                            }}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center text-slate-500 py-8">
+                        <Lightbulb className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                        <p className="text-sm">No demo content yet</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

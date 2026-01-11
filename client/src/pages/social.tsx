@@ -34,7 +34,7 @@ export default function Social() {
   // Fetch social data (no authentication required)
   const { data: recentActivity } = useQuery({
     queryKey: ["/api/user/activity"],
-    enabled: false, // Disable user-specific data
+    enabled: true, // Enable to show demo activity
   });
 
   const { data: topUsers } = useQuery({
@@ -54,7 +54,7 @@ export default function Social() {
 
   const { data: userContent } = useQuery({
     queryKey: ["/api/user/content"],
-    enabled: false, // Disable user-specific data
+    enabled: true, // Enable to show demo content
   });
 
   // No authentication required - show content to all users

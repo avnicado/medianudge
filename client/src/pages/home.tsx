@@ -45,12 +45,12 @@ export default function Home() {
 
   const { data: userRatings } = useQuery({
     queryKey: ["/api/user/media-ratings"],
-    enabled: false, // Disable user-specific queries
+    enabled: true, // Enable to show demo data
   });
 
   const { data: userContent } = useQuery({
     queryKey: ["/api/user/content"],
-    enabled: false, // Disable user-specific queries
+    enabled: true, // Enable to show demo data
   });
 
   const { data: yearlyGoal } = useQuery({
@@ -65,7 +65,7 @@ export default function Home() {
 
   const { data: recentActivity } = useQuery({
     queryKey: ["/api/user/activity"],
-    enabled: false, // Disable user-specific queries
+    enabled: true, // Enable to show demo social activity
   });
 
   const { data: booksRecommendations } = useQuery({

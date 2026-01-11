@@ -335,8 +335,6 @@ export class SimpleStorage implements ISimpleStorage {
     }
   ];
 
-  private nextId = 8;
-
   async getMediaItems(type?: string, limit = 20): Promise<MediaItem[]> {
     let items = this.mediaItems;
     
