@@ -1,4 +1,30 @@
-import { MediaItem, InsertMediaItem, WeeklyChallenge, InsertWeeklyChallenge, User, GuidingQuestion, InsertGuidingQuestion } from "@shared/schema";
+import { MediaItem, InsertMediaItem, WeeklyChallenge, InsertWeeklyChallenge, User, GuidingQuestion, InsertGuidingQuestion, UserMediaRating, UserContent } from "@shared/schema";
+
+// Demo data types
+export interface DemoUserRating {
+  id: number;
+  userId: string;
+  mediaId: number;
+  mindExpandingRating: number;
+  informativeRating: number;
+  entertainingRating: number;
+  review: string | null;
+  dateConsumed: Date | null;
+  createdAt: Date;
+}
+
+export interface DemoUserContent {
+  id: number;
+  userId: string;
+  title: string;
+  type: string;
+  content: string | null;
+  url: string | null;
+  avgRating: number;
+  totalRatings: number;
+  views: number;
+  createdAt: Date;
+}
 
 // Simple in-memory storage for standalone mode
 export interface ISimpleStorage {
@@ -29,11 +55,126 @@ export interface ISimpleStorage {
   // Goal and progress management
   getGoalProgress(): Promise<any>;
   updateGoalProgress(data: any): Promise<any>;
+  
+  // User ratings (demo data)
+  getUserRatings(userId?: string): Promise<any[]>;
+  getAllUserRatings(): Promise<any[]>;
+  createUserRating(rating: Partial<DemoUserRating>): Promise<DemoUserRating>;
+  updateUserRating(id: number, rating: Partial<DemoUserRating>): Promise<DemoUserRating>;
+  deleteUserRating(id: number): Promise<void>;
+  
+  // User content (demo data)
+  getUserContent(userId?: string): Promise<DemoUserContent[]>;
+  getAllUserContent(): Promise<DemoUserContent[]>;
+  createUserContent(content: Partial<DemoUserContent>): Promise<DemoUserContent>;
+  updateUserContent(id: number, content: Partial<DemoUserContent>): Promise<DemoUserContent>;
+  deleteUserContent(id: number): Promise<void>;
 }
 
 export class SimpleStorage implements ISimpleStorage {
   private guidingQuestions: GuidingQuestion[] = [];
   private nextQuestionId = 1;
+  
+  // Demo user ratings
+  private userRatings: DemoUserRating[] = [
+    {
+      id: 1,
+      userId: "demo-user",
+      mediaId: 1, // The Pragmatic Programmer
+      mindExpandingRating: 5,
+      informativeRating: 5,
+      entertainingRating: 4,
+      review: "Excellent book for developers at any level. Filled with practical advice that has made me a better programmer.",
+      dateConsumed: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 2,
+      userId: "demo-user",
+      mediaId: 3, // Machine Learning by Andrew Ng
+      mindExpandingRating: 5,
+      informativeRating: 5,
+      entertainingRating: 4,
+      review: "The best introduction to machine learning. Andrew Ng explains complex concepts in an accessible way.",
+      dateConsumed: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), // 14 days ago
+      createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 3,
+      userId: "demo-user",
+      mediaId: 4, // Hardcore History
+      mindExpandingRating: 5,
+      informativeRating: 5,
+      entertainingRating: 5,
+      review: "Dan Carlin brings history to life in a way that's both educational and utterly captivating.",
+      dateConsumed: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 4,
+      userId: "1", // John Doe
+      mediaId: 2, // Clean Code
+      mindExpandingRating: 4,
+      informativeRating: 5,
+      entertainingRating: 3,
+      review: "A must-read for any professional developer. Changed how I write code.",
+      dateConsumed: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 5,
+      userId: "2", // Jane Smith
+      mediaId: 5, // Inception
+      mindExpandingRating: 5,
+      informativeRating: 3,
+      entertainingRating: 5,
+      review: "Mind-bending thriller that makes you question reality. Nolan at his best.",
+      dateConsumed: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+    }
+  ];
+  private nextRatingId = 6;
+  
+  // Demo user content
+  private userContents: DemoUserContent[] = [
+    {
+      id: 1,
+      userId: "demo-user",
+      title: "Understanding Async/Await in JavaScript",
+      type: "article",
+      content: "A deep dive into modern JavaScript async patterns and how to avoid common pitfalls when working with promises and async/await.",
+      url: null,
+      avgRating: 4.5,
+      totalRatings: 12,
+      views: 234,
+      createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 2,
+      userId: "demo-user",
+      title: "The Philosophy of Software Design",
+      type: "video",
+      content: "Exploring the deeper principles behind good software architecture, inspired by John Ousterhout's work.",
+      url: null,
+      avgRating: 4.7,
+      totalRatings: 18,
+      views: 456,
+      createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 3,
+      userId: "1", // John Doe
+      title: "Why Functional Programming Matters",
+      type: "article",
+      content: "An exploration of functional programming principles and their benefits in modern software development.",
+      url: null,
+      avgRating: 4.3,
+      totalRatings: 8,
+      views: 167,
+      createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000)
+    }
+  ];
+  private nextContentId = 4;
   
   private weeklyChallenges: WeeklyChallenge[] = [
     {
@@ -193,8 +334,6 @@ export class SimpleStorage implements ISimpleStorage {
       updatedAt: new Date()
     }
   ];
-
-  private nextId = 8;
 
   async getMediaItems(type?: string, limit = 20): Promise<MediaItem[]> {
     let items = this.mediaItems;
@@ -363,6 +502,138 @@ export class SimpleStorage implements ISimpleStorage {
   async updateGoalProgress(data: any): Promise<any> {
     this.goalProgress = { ...this.goalProgress, ...data };
     return this.goalProgress;
+  }
+  
+  // User ratings methods
+  async getUserRatings(userId?: string): Promise<any[]> {
+    let ratings = this.userRatings;
+    if (userId) {
+      ratings = ratings.filter(r => r.userId === userId);
+    }
+    
+    // Enrich with media details
+    return ratings.map(rating => {
+      const media = this.mediaItems.find(m => m.id === rating.mediaId);
+      const rating_value = Math.round((rating.mindExpandingRating + rating.informativeRating + rating.entertainingRating) / 3);
+      return {
+        ...rating,
+        media,
+        rating: rating_value
+      };
+    }).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+  
+  async getAllUserRatings(): Promise<any[]> {
+    // Return all ratings with user and media details for social feed
+    return this.userRatings.map(rating => {
+      const media = this.mediaItems.find(m => m.id === rating.mediaId);
+      const user = this.sampleUsers.find(u => u.id === rating.userId) || {
+        id: "demo-user",
+        firstName: "Demo",
+        lastName: "User",
+        profileImageUrl: null,
+        wisdomScore: 450
+      };
+      
+      const rating_value = Math.round((rating.mindExpandingRating + rating.informativeRating + rating.entertainingRating) / 3);
+      
+      return {
+        id: rating.id,
+        rating: rating_value,
+        review: rating.review,
+        mediaTitle: media?.title || "Unknown",
+        mediaType: media?.type || "unknown",
+        userFirstName: user.firstName,
+        userLastName: user.lastName,
+        userProfileImageUrl: user.profileImageUrl,
+        userWisdomScore: user.wisdomScore,
+        createdAt: rating.createdAt
+      };
+    }).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+  
+  async createUserRating(ratingData: Partial<DemoUserRating>): Promise<DemoUserRating> {
+    const rating: DemoUserRating = {
+      id: this.nextRatingId++,
+      userId: ratingData.userId || "demo-user",
+      mediaId: ratingData.mediaId || 1,
+      mindExpandingRating: ratingData.mindExpandingRating || 3,
+      informativeRating: ratingData.informativeRating || 3,
+      entertainingRating: ratingData.entertainingRating || 3,
+      review: ratingData.review || null,
+      dateConsumed: ratingData.dateConsumed || new Date(),
+      createdAt: new Date()
+    };
+    
+    this.userRatings.push(rating);
+    return rating;
+  }
+  
+  async updateUserRating(id: number, ratingData: Partial<DemoUserRating>): Promise<DemoUserRating> {
+    const index = this.userRatings.findIndex(r => r.id === id);
+    if (index === -1) {
+      throw new Error('User rating not found');
+    }
+    
+    this.userRatings[index] = {
+      ...this.userRatings[index],
+      ...ratingData
+    };
+    
+    return this.userRatings[index];
+  }
+  
+  async deleteUserRating(id: number): Promise<void> {
+    this.userRatings = this.userRatings.filter(r => r.id !== id);
+  }
+  
+  // User content methods
+  async getUserContent(userId?: string): Promise<DemoUserContent[]> {
+    let content = this.userContents;
+    if (userId) {
+      content = content.filter(c => c.userId === userId);
+    }
+    return content.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+  
+  async getAllUserContent(): Promise<DemoUserContent[]> {
+    return this.userContents.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+  
+  async createUserContent(contentData: Partial<DemoUserContent>): Promise<DemoUserContent> {
+    const content: DemoUserContent = {
+      id: this.nextContentId++,
+      userId: contentData.userId || "demo-user",
+      title: contentData.title || "Untitled",
+      type: contentData.type || "article",
+      content: contentData.content || null,
+      url: contentData.url || null,
+      avgRating: contentData.avgRating || 0,
+      totalRatings: contentData.totalRatings || 0,
+      views: contentData.views || 0,
+      createdAt: new Date()
+    };
+    
+    this.userContents.push(content);
+    return content;
+  }
+  
+  async updateUserContent(id: number, contentData: Partial<DemoUserContent>): Promise<DemoUserContent> {
+    const index = this.userContents.findIndex(c => c.id === id);
+    if (index === -1) {
+      throw new Error('User content not found');
+    }
+    
+    this.userContents[index] = {
+      ...this.userContents[index],
+      ...contentData
+    };
+    
+    return this.userContents[index];
+  }
+  
+  async deleteUserContent(id: number): Promise<void> {
+    this.userContents = this.userContents.filter(c => c.id !== id);
   }
 }
 
