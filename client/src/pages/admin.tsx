@@ -63,6 +63,7 @@ export default function Admin() {
   const [isQuestionDialogOpen, setIsQuestionDialogOpen] = useState(false);
   const [isChallengeDialogOpen, setIsChallengeDialogOpen] = useState(false);
   const [editingChallenge, setEditingChallenge] = useState<any>(null);
+  const [editingQuestion, setEditingQuestion] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -205,6 +206,7 @@ export default function Admin() {
       queryClient.invalidateQueries({ queryKey: ["/api/guiding-questions"] });
       questionForm.reset();
       setIsQuestionDialogOpen(false);
+      setEditingQuestion(null);
       toast({
         title: "Success",
         description: "Guiding question added successfully",
@@ -214,6 +216,29 @@ export default function Admin() {
       toast({
         title: "Error",
         description: "Failed to add guiding question",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateQuestionMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: GuidingQuestionFormData }) => {
+      await apiRequest("PUT", `/api/guiding-questions/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/guiding-questions"] });
+      questionForm.reset();
+      setIsQuestionDialogOpen(false);
+      setEditingQuestion(null);
+      toast({
+        title: "Success",
+        description: "Guiding question updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update guiding question",
         variant: "destructive",
       });
     },
@@ -344,7 +369,19 @@ export default function Admin() {
   };
 
   const onSubmitQuestion = async (data: GuidingQuestionFormData) => {
-    await addQuestionMutation.mutateAsync(data);
+    if (editingQuestion) {
+      await updateQuestionMutation.mutateAsync({ id: editingQuestion.id, data });
+    } else {
+      await addQuestionMutation.mutateAsync(data);
+    }
+  };
+
+  const handleEditQuestion = (question: any) => {
+    setEditingQuestion(question);
+    questionForm.reset({
+      question: question.question,
+    });
+    setIsQuestionDialogOpen(true);
   };
 
   const onSubmitChallenge = async (data: WeeklyChallengeFormData) => {
@@ -968,7 +1005,13 @@ export default function Admin() {
                     <Target className="w-5 h-5 text-primary mr-2" />
                     Guiding Questions Management
                   </CardTitle>
-                  <Dialog open={isQuestionDialogOpen} onOpenChange={setIsQuestionDialogOpen}>
+                  <Dialog open={isQuestionDialogOpen} onOpenChange={(open) => {
+                    setIsQuestionDialogOpen(open);
+                    if (!open) {
+                      setEditingQuestion(null);
+                      questionForm.reset();
+                    }
+                  }}>
                     <DialogTrigger asChild>
                       <Button variant="outline" size="sm">
                         <Plus className="w-4 h-4 mr-2" />
@@ -977,7 +1020,7 @@ export default function Admin() {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Add Guiding Question</DialogTitle>
+                        <DialogTitle>{editingQuestion ? 'Edit' : 'Add'} Guiding Question</DialogTitle>
                       </DialogHeader>
                       <Form {...questionForm}>
                         <form onSubmit={questionForm.handleSubmit(onSubmitQuestion)} className="space-y-4">
@@ -1001,9 +1044,11 @@ export default function Admin() {
                           <Button 
                             type="submit" 
                             className="w-full"
-                            disabled={addQuestionMutation.isPending}
+                            disabled={addQuestionMutation.isPending || updateQuestionMutation.isPending}
                           >
-                            {addQuestionMutation.isPending ? "Adding..." : "Add Question"}
+                            {(addQuestionMutation.isPending || updateQuestionMutation.isPending) 
+                              ? "Saving..." 
+                              : editingQuestion ? "Update Question" : "Add Question"}
                           </Button>
                         </form>
                       </Form>
@@ -1020,15 +1065,25 @@ export default function Admin() {
                       {guidingQuestions?.map((question: any) => (
                         <div key={question.id} className="flex items-start justify-between p-4 bg-slate-50 rounded-lg">
                           <span className="text-sm text-slate-700 flex-1">"{question.question}"</span>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => deleteQuestionMutation.mutate(question.id)}
-                            disabled={deleteQuestionMutation.isPending}
-                            className="text-red-500 hover:text-red-700 ml-2"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          <div className="flex space-x-2 ml-2">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => handleEditQuestion(question)}
+                              className="text-blue-500 hover:text-blue-700"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => deleteQuestionMutation.mutate(question.id)}
+                              disabled={deleteQuestionMutation.isPending}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
                       {(!guidingQuestions || guidingQuestions.length === 0) && (
