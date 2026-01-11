@@ -208,6 +208,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put('/api/guiding-questions/:id', async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid question ID" });
+      }
+      
       const { question } = req.body;
       if (!question || typeof question !== 'string') {
         return res.status(400).json({ message: "Question is required" });

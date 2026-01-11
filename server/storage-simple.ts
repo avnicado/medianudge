@@ -328,6 +328,10 @@ export class SimpleStorage implements ISimpleStorage {
   }
 
   async updateGuidingQuestion(id: number, questionData: Partial<InsertGuidingQuestion>): Promise<GuidingQuestion> {
+    if (typeof id !== 'number' || isNaN(id)) {
+      throw new Error(`Invalid question ID: ${id}`);
+    }
+    
     const index = this.guidingQuestions.findIndex(q => q.id === id);
     if (index === -1) {
       throw new Error(`Guiding question with id ${id} not found`);
