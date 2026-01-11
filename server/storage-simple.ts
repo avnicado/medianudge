@@ -23,6 +23,7 @@ export interface ISimpleStorage {
   // Guiding questions
   getGuidingQuestions(): Promise<GuidingQuestion[]>;
   createGuidingQuestion(question: InsertGuidingQuestion): Promise<GuidingQuestion>;
+  updateGuidingQuestion(id: number, question: Partial<InsertGuidingQuestion>): Promise<GuidingQuestion>;
   deleteGuidingQuestion(id: number): Promise<void>;
   
   // Goal and progress management
@@ -324,6 +325,24 @@ export class SimpleStorage implements ISimpleStorage {
     
     this.guidingQuestions.push(question);
     return question;
+  }
+
+  async updateGuidingQuestion(id: number, questionData: Partial<InsertGuidingQuestion>): Promise<GuidingQuestion> {
+    const index = this.guidingQuestions.findIndex(q => q.id === id);
+    if (index === -1) {
+      throw new Error(`Guiding question with id ${id} not found`);
+    }
+    
+    const existingQuestion = this.guidingQuestions[index];
+    const updatedQuestion: GuidingQuestion = {
+      ...existingQuestion,
+      ...questionData,
+      id: existingQuestion.id, // Ensure ID doesn't change
+      createdAt: existingQuestion.createdAt // Preserve original creation date
+    };
+    
+    this.guidingQuestions[index] = updatedQuestion;
+    return updatedQuestion;
   }
 
   async deleteGuidingQuestion(id: number): Promise<void> {

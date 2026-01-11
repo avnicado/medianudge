@@ -205,6 +205,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put('/api/guiding-questions/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { question } = req.body;
+      if (!question || typeof question !== 'string') {
+        return res.status(400).json({ message: "Question is required" });
+      }
+      
+      const updatedQuestion = await simpleStorage.updateGuidingQuestion(id, { question });
+      res.json(updatedQuestion);
+    } catch (error) {
+      console.error("Error updating guiding question:", error);
+      res.status(500).json({ message: "Failed to update guiding question" });
+    }
+  });
+
   app.delete('/api/guiding-questions/:id', async (req, res) => {
     try {
       const id = parseInt(req.params.id);
