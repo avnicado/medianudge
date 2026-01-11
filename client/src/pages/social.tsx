@@ -510,27 +510,37 @@ export default function Social() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {userContent?.slice(0, 3).map((content: any) => (
-                    <div key={content.id} className="border border-slate-200 rounded-lg p-3">
-                      <h4 className="font-medium text-slate-900 text-sm mb-1">
-                        {content.title}
-                      </h4>
-                      <div className="flex items-center space-x-2 text-xs text-slate-500">
-                        <Badge variant="secondary" className="text-xs">
-                          {content.type}
-                        </Badge>
-                        <span>{content.views || 0} views</span>
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                          <span>{content.avgRating?.toFixed(1) || '0.0'}</span>
+                {userContent && userContent.length > 0 ? (
+                  <>
+                    <div className="space-y-4">
+                      {userContent.slice(0, 3).map((content: any) => (
+                        <div key={content.id} className="border border-slate-200 rounded-lg p-3">
+                          <h4 className="font-medium text-slate-900 text-sm mb-1">
+                            {content.title}
+                          </h4>
+                          <div className="flex items-center space-x-2 text-xs text-slate-500">
+                            <Badge variant="secondary" className="text-xs">
+                              {content.type}
+                            </Badge>
+                            <span>{content.views || 0} views</span>
+                            <div className="flex items-center space-x-1">
+                              <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                              <span>{content.avgRating?.toFixed(1) || '0.0'}</span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
                 
-                <Separator className="my-4" />
+                    <Separator className="my-4" />
+                  </>
+                ) : (
+                  <div className="text-center text-slate-500 py-6">
+                    <Target className="w-10 h-10 mx-auto mb-2 text-slate-300" />
+                    <p className="text-sm font-medium mb-1">No contributions yet</p>
+                    <p className="text-xs text-slate-400 mb-3">Create content to share your knowledge with the community</p>
+                  </div>
+                )}
                 
                 <Tooltip>
                   <TooltipTrigger asChild>
