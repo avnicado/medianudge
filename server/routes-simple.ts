@@ -257,25 +257,137 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Disabled user-specific routes (return empty responses)
+  // User-specific routes (return demo data)
   
-  app.get('/api/user/media-ratings', (req, res) => res.json([]));
+  app.get('/api/user/media-ratings', async (req, res) => {
+    try {
+      const ratings = await simpleStorage.getUserRatings("demo-user");
+      res.json(ratings);
+    } catch (error) {
+      console.error("Error fetching user ratings:", error);
+      res.json([]);
+    }
+  });
+  
   app.post('/api/user/media-ratings', (req, res) => res.json({ success: true, message: "Feature disabled in standalone mode" }));
   
   app.post('/api/user/follow', (req, res) => res.json({ success: true, message: "Feature disabled in standalone mode" }));
   app.post('/api/user/unfollow', (req, res) => res.json({ success: true, message: "Feature disabled in standalone mode" }));
   app.get('/api/user/followers', (req, res) => res.json([]));
   app.get('/api/user/following', (req, res) => res.json([]));
-  app.get('/api/user/activity', (req, res) => res.json([]));
+  
+  app.get('/api/user/activity', async (req, res) => {
+    try {
+      const activity = await simpleStorage.getAllUserRatings();
+      res.json(activity);
+    } catch (error) {
+      console.error("Error fetching user activity:", error);
+      res.json([]);
+    }
+  });
   
   app.get('/api/user/yearly-goal/:year', (req, res) => res.json(null));
   app.post('/api/user/yearly-goal', (req, res) => res.json({ success: true, message: "Feature disabled in standalone mode" }));
   
-  app.get('/api/user/content', (req, res) => res.json([]));
+  app.get('/api/user/content', async (req, res) => {
+    try {
+      const content = await simpleStorage.getUserContent("demo-user");
+      res.json(content);
+    } catch (error) {
+      console.error("Error fetching user content:", error);
+      res.json([]);
+    }
+  });
+  
   app.post('/api/user/content', (req, res) => res.json({ success: true, message: "Feature disabled in standalone mode" }));
   
   app.get('/api/user/challenge-progress/:challengeId', (req, res) => res.json(null));
   app.post('/api/user/challenge-progress/:challengeId', (req, res) => res.json({ success: true, message: "Feature disabled in standalone mode" }));
+  
+  // Demo data management routes for admin panel
+  app.get('/api/demo-data/ratings', async (req, res) => {
+    try {
+      const ratings = await simpleStorage.getUserRatings();
+      res.json(ratings);
+    } catch (error) {
+      console.error("Error fetching demo ratings:", error);
+      res.status(500).json({ message: "Failed to fetch demo ratings" });
+    }
+  });
+  
+  app.post('/api/demo-data/ratings', async (req, res) => {
+    try {
+      const rating = await simpleStorage.createUserRating(req.body);
+      res.json(rating);
+    } catch (error) {
+      console.error("Error creating demo rating:", error);
+      res.status(500).json({ message: "Failed to create demo rating" });
+    }
+  });
+  
+  app.put('/api/demo-data/ratings/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const rating = await simpleStorage.updateUserRating(id, req.body);
+      res.json(rating);
+    } catch (error) {
+      console.error("Error updating demo rating:", error);
+      res.status(500).json({ message: "Failed to update demo rating" });
+    }
+  });
+  
+  app.delete('/api/demo-data/ratings/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await simpleStorage.deleteUserRating(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting demo rating:", error);
+      res.status(500).json({ message: "Failed to delete demo rating" });
+    }
+  });
+  
+  app.get('/api/demo-data/content', async (req, res) => {
+    try {
+      const content = await simpleStorage.getAllUserContent();
+      res.json(content);
+    } catch (error) {
+      console.error("Error fetching demo content:", error);
+      res.status(500).json({ message: "Failed to fetch demo content" });
+    }
+  });
+  
+  app.post('/api/demo-data/content', async (req, res) => {
+    try {
+      const content = await simpleStorage.createUserContent(req.body);
+      res.json(content);
+    } catch (error) {
+      console.error("Error creating demo content:", error);
+      res.status(500).json({ message: "Failed to create demo content" });
+    }
+  });
+  
+  app.put('/api/demo-data/content/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const content = await simpleStorage.updateUserContent(id, req.body);
+      res.json(content);
+    } catch (error) {
+      console.error("Error updating demo content:", error);
+      res.status(500).json({ message: "Failed to update demo content" });
+    }
+  });
+  
+  app.delete('/api/demo-data/content/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await simpleStorage.deleteUserContent(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting demo content:", error);
+      res.status(500).json({ message: "Failed to delete demo content" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

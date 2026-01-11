@@ -310,39 +310,31 @@ export default function Home() {
             </CardHeader>
             <CardContent className="pt-6">
               <div className="space-y-4">
-                {userRatings && userRatings.length > 0 ? (
-                  userRatings.slice(0, 3).map((rating: any) => (
-                    <div key={rating.id} className="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <BookOpen className="w-4 h-4 text-green-600" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-slate-900">
-                          {rating.media?.title || 'Media Item'}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          Rated {rating.rating}★ • {new Date(rating.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-primary" disabled>
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Not implemented yet</p>
-                        </TooltipContent>
-                      </Tooltip>
+                {userRatings?.slice(0, 3).map((rating: any) => (
+                  <div key={rating.id} className="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                      <BookOpen className="w-4 h-4 text-green-600" />
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center text-slate-500 py-8">
-                    <History className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                    <p className="text-base font-medium mb-1">No recent activity yet</p>
-                    <p className="text-sm text-slate-400">Start rating books, courses, and other content to see your activity here</p>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-slate-900">
+                        {rating.media?.title || 'Media Item'}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Rated {rating.rating}★ • {new Date(rating.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm" className="text-primary" disabled>
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Not implemented yet</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
-                )}
+                ))}
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -409,54 +401,42 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {recentActivity && recentActivity.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {recentActivity.slice(0, 3).map((activity: any) => (
-                    <div key={activity.id} className="border border-slate-200 rounded-lg p-4">
-                      <div className="flex items-center space-x-2 mb-3">
-                        <img 
-                          src={activity.userProfileImageUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"}
-                          alt={`${activity.userFirstName} profile`}
-                          className="w-8 h-8 rounded-full object-cover"
-                        />
-                        <div>
-                          <p className="text-sm font-medium text-slate-900">
-                            {activity.userFirstName} {activity.userLastName}
-                          </p>
-                          <p className="text-xs text-slate-500">Wisdom: {wisdomLevel}</p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-slate-700 mb-2">
-                        {activity.review || `Rated "${activity.mediaTitle}" ${activity.rating}★`}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recentActivity?.slice(0, 3).map((activity: any) => (
+                <div key={activity.id} className="border border-slate-200 rounded-lg p-4">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <img 
+                      src={activity.userProfileImageUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"}
+                      alt={`${activity.userFirstName} profile`}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">
+                        {activity.userFirstName} {activity.userLastName}
                       </p>
-                      <div className="flex items-center space-x-2">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star 
-                              key={i} 
-                              className={`w-3 h-3 ${i < activity.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
-                            />
-                          ))}
-                          <span className="text-sm font-medium ml-1">{activity.rating}★</span>
-                        </div>
-                        <span className="text-xs text-slate-500">
-                          {new Date(activity.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
+                      <p className="text-xs text-slate-500">Wisdom: {wisdomLevel}</p>
                     </div>
-                  ))}
+                  </div>
+                  <p className="text-sm text-slate-700 mb-2">
+                    {activity.review || `Rated "${activity.mediaTitle}" ${activity.rating}★`}
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          className={`w-3 h-3 ${i < activity.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                        />
+                      ))}
+                      <span className="text-sm font-medium ml-1">{activity.rating}★</span>
+                    </div>
+                    <span className="text-xs text-slate-500">
+                      {new Date(activity.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
-            
-                <Separator className="my-4" />
-              </>
-            ) : (
-              <div className="text-center text-slate-500 py-8">
-                <Users className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                <p className="text-base font-medium mb-1">No social activity yet</p>
-                <p className="text-sm text-slate-400">Community ratings and reviews will appear here</p>
-              </div>
-            )}
+              ))}
+            </div>
             
             <Separator className="my-4" />
             
@@ -487,66 +467,45 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {userContent && userContent.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  {userContent.slice(0, 2).map((content: any) => (
-                    <div key={content.id} className="border border-slate-200 rounded-lg p-4">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Film className="w-4 h-4 text-red-500" />
-                        <span className="text-sm font-medium text-slate-900">{content.type}</span>
-                      </div>
-                      <h4 className="font-medium text-slate-900 mb-1">{content.title}</h4>
-                      <p className="text-sm text-slate-600 mb-2">{content.content}</p>
-                      <div className="flex items-center space-x-3 text-sm">
-                        <span className="text-slate-500">{content.views || 0} views</span>
-                        <div className="flex items-center">
-                          <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                          <span className="ml-1 font-medium">{content.avgRating?.toFixed(1) || '0.0'}★</span>
-                        </div>
-                        <span className="text-slate-500">
-                          {new Date(content.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {userContent?.slice(0, 2).map((content: any) => (
+                <div key={content.id} className="border border-slate-200 rounded-lg p-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Film className="w-4 h-4 text-red-500" />
+                    <span className="text-sm font-medium text-slate-900">{content.type}</span>
+                  </div>
+                  <h4 className="font-medium text-slate-900 mb-1">{content.title}</h4>
+                  <p className="text-sm text-slate-600 mb-2">{content.content}</p>
+                  <div className="flex items-center space-x-3 text-sm">
+                    <span className="text-slate-500">{content.views || 0} views</span>
+                    <div className="flex items-center">
+                      <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                      <span className="ml-1 font-medium">{content.avgRating?.toFixed(1) || '0.0'}★</span>
                     </div>
-                  ))}
+                    <span className="text-slate-500">
+                      {new Date(content.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
+              ))}
+            </div>
             
-                <div className="flex items-center justify-between">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button className="bg-primary text-white font-medium" disabled>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Create Content
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Not implemented yet</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium" onClick={() => window.location.href = '/progress'}>
-                    View All Contributions
+            <div className="flex items-center justify-between">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button className="bg-primary text-white font-medium" disabled>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Content
                   </Button>
-                </div>
-              </>
-            ) : (
-              <div className="text-center text-slate-500 py-8">
-                <Lightbulb className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                <p className="text-base font-medium mb-1">No contributions yet</p>
-                <p className="text-sm text-slate-400 mb-4">Share your insights by creating videos, articles, or debate contributions</p>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button className="bg-primary text-white font-medium" disabled>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Your First Contribution
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Not implemented yet</p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-            )}
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Not implemented yet</p>
+                </TooltipContent>
+              </Tooltip>
+              <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium" onClick={() => window.location.href = '/progress'}>
+                View All Contributions
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </main>
